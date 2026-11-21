@@ -12,7 +12,7 @@ import {isAdmin} from './account_roles.js';
 import {requireCardFaction} from './factions.js';
 
 const HASH = /^[0-9a-f]{64}$/;
-const CARD_FIELDS = ['card_id', 'revision', 'definition', 'definition_hash', 'canonical_definition', 'keyword_bindings', 'compiled_program_hash', 'compiler_version', 'interpreter_version', 'rules_text', 'created_at', 'art', 'token_art', 'derived_from', 'available_revisions'];
+const CARD_FIELDS = ['card_id', 'revision', 'definition', 'definition_hash', 'canonical_definition', 'keyword_bindings', 'compiled_program_hash', 'compiler_version', 'interpreter_version', 'rules_text', 'created_at', 'submitted_at', 'art', 'token_art', 'derived_from', 'available_revisions'];
 
 /** Explicit public projection: author prompts and job metadata never enter shared responses. */
 export function publicCard(card, owner, admin = false, state = {}) {

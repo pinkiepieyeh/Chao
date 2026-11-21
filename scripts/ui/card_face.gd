@@ -542,6 +542,7 @@ func _rules_text() -> String:
 	if source != _rules_source:
 		_rules_source = source.duplicate(true)
 		_rules_cache = _make_rules_text()
+		if spec.get("_meow", false): _rules_cache = EasterEggs.meow(_rules_cache)
 		_keyword_labels = CardRuntime.keyword_labels(spec)
 		_keyword_labels.sort_custom(func(a,b):return a.length()>b.length())
 	return _rules_cache

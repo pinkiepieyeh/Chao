@@ -881,6 +881,9 @@ func _prepare_deck(deck: Array, keyword_defs: Array, primary: Variant = null, se
 		cards.append(compiled)
 		var artwork := str(entry.get("art_id", ""))
 		if CardArtCache.valid_id(artwork): compiled["art_id"] = artwork
+		var submitted := str(entry.get("submitted_on", ""))
+		var dated := RegEx.create_from_string("^\\d{4}-\\d{2}-\\d{2}$").search(submitted) != null
+		if dated: compiled["submitted_on"] = submitted
 		var token_art: Variant = entry.get("token_art_ids", {})
 		if not CardArtCache.valid_token_art_ids(token_art, source): return {"ok":false,"error":"衍生卡卡面引用无效。"}
 		compiled["token_art_ids"] = token_art.duplicate(true)
@@ -891,6 +894,7 @@ func _prepare_deck(deck: Array, keyword_defs: Array, primary: Variant = null, se
 			compiled["telemetry_ref"]=identity.ref
 			envelope["telemetry_ref"]=identity.ref
 		if CardArtCache.valid_id(artwork): envelope["art_id"] = artwork
+		if dated: envelope["submitted_on"] = submitted
 		if not token_art.is_empty(): envelope["token_art_ids"] = token_art.duplicate(true)
 		sources.append(envelope if envelope.size() > 1 else source.duplicate(true))
 	var selection := DeckRules.factions(sources, faction_catalog, main_faction_id, "", true)

@@ -400,6 +400,7 @@ func display_definition(record: Dictionary) -> Dictionary:
 		var compiled := compile_record(record)
 		if not compiled.ok: return record.get("definition", {})
 		_display_cache[key] = Runtime.display_definition(compiled)
+	if EasterEggs.meow_date(EasterEggs.record_date(record)): return EasterEggs.meow_definition(_display_cache[key])
 	return _display_cache[key]
 
 ## The profile is this client's own file. The strict parser takes seconds on a large library, so parse it natively and
@@ -720,6 +721,7 @@ func compile_deck() -> Dictionary:
 		var compiled := compile_record(record)
 		if not compiled.ok: return compiled
 		if record.get("art") is Dictionary: compiled["art_id"] = str(record.art.get("id", ""))
+		compiled["submitted_on"] = EasterEggs.record_date(record)
 		for keyword in record_keywords(record):
 			var identity := _keyword_id(keyword)
 			if frozen.has(identity) and Runtime.sha(frozen[identity]) != Runtime.sha(keyword): return _error("牌组使用了来自不同服务器且定义冲突的词条版本。")

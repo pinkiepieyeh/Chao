@@ -1,8 +1,8 @@
 extends Node
 ## Finds new clients through a signed manifest kept in the GitHub repository and installs them from GitHub Releases.
 ## The manifest is signed with the maintainer's offline key, so write access to the repository alone cannot ship a client.
-const BASE_BUILD := 1301
-const BASE_VERSION := "0.13.1"
+const BASE_BUILD := 1302
+const BASE_VERSION := "0.13.2"
 const MANIFEST := "release/client.json"
 const RELEASES := "https://github.com/xiangwu738-design/Chao/releases"
 const DOWNLOAD_PREFIX := RELEASES + "/download/"
@@ -156,6 +156,7 @@ func check() -> void:
 		reached = true
 		found = verify(JSON.parse_string(response[3].get_string_from_utf8()))
 		if not found.is_empty(): break
+	if reached: await _fetch_events(roots)
 	busy = false
 	if not found.is_empty():
 		available = found
@@ -166,6 +167,16 @@ func check() -> void:
 	else:
 		status = "暂时无法检查更新"
 	changed.emit()
+
+const EVENTS := "release/events.json"
+
+## Time-limited easter eggs, switched in the repository; unreachable or malformed means none.
+func _fetch_events(roots: Array) -> void:
+	for index in roots.size():
+		var response := await _request(str(roots[index]) + EVENTS, PRIMARY_TIMEOUT, 16384)
+		if response.is_empty() or response[0] != HTTPRequest.RESULT_SUCCESS or response[1] != 200: continue
+		EasterEggs.configure(JSON.parse_string(response[3].get_string_from_utf8()))
+		return
 
 func _valid_file(path: String, item: Dictionary) -> bool:
 	var file := FileAccess.open(path, FileAccess.READ)

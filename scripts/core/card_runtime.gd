@@ -1295,6 +1295,10 @@ static func _compact_rules(text: String) -> String:
 	return text
 
 static func display_definition(card: Dictionary) -> Dictionary:
+	if EasterEggs.meow_date(str(card.get("submitted_on", ""))):
+		var plain := card.duplicate(false)
+		plain.erase("submitted_on")
+		return EasterEggs.meow_definition(display_definition(plain))
 	var d: Dictionary = card.definition.duplicate(true)
 	d["_printed"] = card.get("source",card.definition).duplicate(true)
 	d["_keyword_info"] = card.get("display_keywords",builtin_keywords()).duplicate(true)

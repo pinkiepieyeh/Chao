@@ -1,0 +1,44 @@
+name: 活动
+# Switched by release/events.json. While on, issues and PRs opened on the egg's date get 喵 before every punctuation
+# mark; when it is turned off or expires, the hourly run (or a push to the switch) restores the original text.
+# Runs the default branch's script only; nothing from a pull request is checked out.
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+  push:
+    branches: [main]
+    paths: ["release/events.json"]
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "apply 或 restore"
+        required: true
+        default: apply
+        type: choice
+        options: [apply, restore]
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+concurrency:
+  group: meow
+  cancel-in-progress: false
+jobs:
+  meow:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            release/events.json
+            .github/scripts/meow.cjs
+          sparse-checkout-cone-mode: false
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const run = require('./.github/scripts/meow.cjs');
+            await run({github, context, core});

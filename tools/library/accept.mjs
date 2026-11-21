@@ -30,6 +30,7 @@ export function acceptSubmission(catalog, {compiled, submission, artBytes = null
     provenance: {source_kind: 'github_submission'},
     owner_id: owner,
     created_at: previous?.created_at ?? new Date().toISOString(),
+    submitted_at: new Date().toISOString(),
     ...(art ? {art} : {}),
     token_art: previous?.token_art ?? {},
   };
