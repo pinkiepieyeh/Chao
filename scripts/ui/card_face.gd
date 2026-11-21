@@ -696,7 +696,7 @@ func _draw_effect_rail() -> void:
 			_text_fit("+",rect,14,PRINT,HORIZONTAL_ALIGNMENT_CENTER,true)
 			continue
 		var id := str(badge.id)
-		var icon: Array = StatusIcons.BADGES.get("stack" if id.begins_with("stack_") else id, ["stack", StatusIcons.WHITE] if id.begins_with("stack_") else [])
+		var icon: Array = StatusIcons.BADGES.get(id, StatusIcons.BADGES.get("stack", ["stack", StatusIcons.WHITE]) if id.begins_with("stack_") else [])
 		if icon.is_empty() or not StatusIcons.draw(self, icon[0], rect.grow(-3), icon[1]):
 			_text_fit(str(badge.mark),rect,14,GOLD if id=="armor" else PRINT,HORIZONTAL_ALIGNMENT_CENTER,true)
 			continue

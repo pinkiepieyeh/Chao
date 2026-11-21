@@ -353,6 +353,24 @@
           ]
         },
         {
+          "type": "array",
+          "items": {
+            "enum": [
+              "enemy_unit_deployed",
+              "enemy_order_played",
+              "enemy_hq_attacked",
+              "enemy_unit_attacked",
+              "enemy_unit_acted",
+              "enemy_unit_moved_to_front",
+              "enemy_unit_ability_triggered",
+              "unit_attack_changed"
+            ]
+          },
+          "minItems": 2,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        {
           "type": "null"
         }
       ]
@@ -3225,7 +3243,8 @@
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
                 "self_and_trigger",
-                "selected_units"
+                "selected_units",
+                "summoned"
               ]
             },
             "attack_delta": {
@@ -4366,7 +4385,8 @@
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
                 "self_and_trigger",
-                "selected_units"
+                "selected_units",
+                "summoned"
               ]
             },
             "keyword_id": {
@@ -11748,7 +11768,8 @@
                                 "all_units",
                                 "all_other_friendly_units",
                                 "self_and_trigger",
-                                "selected_units"
+                                "selected_units",
+                                "summoned"
                               ]
                             },
                             "attack_delta": {
@@ -15199,7 +15220,8 @@
                 "trigger_and_adjacent",
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
-                "self_and_trigger"
+                "self_and_trigger",
+                "summoned"
               ]
             },
             "unit_class": {
@@ -18520,7 +18542,8 @@
                               "all_units",
                               "all_other_friendly_units",
                               "self_and_trigger",
-                              "selected_units"
+                              "selected_units",
+                              "summoned"
                             ]
                           },
                           "attack_delta": {
@@ -21517,12 +21540,12 @@
             "min": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 3
+              "maximum": 5
             },
             "max": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 3
+              "maximum": 5
             },
             "unit_filter": {
               "type": "object",
@@ -22656,6 +22679,47 @@
             "trigger",
             "duration"
           ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "if_destroyed"
+            },
+            "tiers": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 5,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "min": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "effects": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "$ref": "#/definitions/scheduled_effect"
+                    }
+                  }
+                },
+                "required": [
+                  "min",
+                  "effects"
+                ]
+              }
+            }
+          },
+          "required": [
+            "op",
+            "tiers"
+          ]
         }
       ]
     },
@@ -23330,6 +23394,24 @@
                 "enemy_unit_ability_triggered",
                 "unit_attack_changed"
               ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "enemy_unit_deployed",
+                  "enemy_order_played",
+                  "enemy_hq_attacked",
+                  "enemy_unit_attacked",
+                  "enemy_unit_acted",
+                  "enemy_unit_moved_to_front",
+                  "enemy_unit_ability_triggered",
+                  "unit_attack_changed"
+                ]
+              },
+              "minItems": 2,
+              "maxItems": 8,
+              "uniqueItems": true
             },
             {
               "type": "null"
@@ -27975,7 +28057,8 @@
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
                 "self_and_trigger",
-                "selected_units"
+                "selected_units",
+                "summoned"
               ]
             },
             "attack_delta": {
@@ -29116,7 +29199,8 @@
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
                 "self_and_trigger",
-                "selected_units"
+                "selected_units",
+                "summoned"
               ]
             },
             "keyword_id": {
@@ -36498,7 +36582,8 @@
                                 "all_units",
                                 "all_other_friendly_units",
                                 "self_and_trigger",
-                                "selected_units"
+                                "selected_units",
+                                "summoned"
                               ]
                             },
                             "attack_delta": {
@@ -39949,7 +40034,8 @@
                 "trigger_and_adjacent",
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
-                "self_and_trigger"
+                "self_and_trigger",
+                "summoned"
               ]
             },
             "unit_class": {
@@ -42994,7 +43080,8 @@
                               "all_units",
                               "all_other_friendly_units",
                               "self_and_trigger",
-                              "selected_units"
+                              "selected_units",
+                              "summoned"
                             ]
                           },
                           "attack_delta": {
@@ -46900,6 +46987,47 @@
             "trigger",
             "duration"
           ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "if_destroyed"
+            },
+            "tiers": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 5,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "min": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                  },
+                  "effects": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 4,
+                    "items": {
+                      "$ref": "#/definitions/scheduled_effect"
+                    }
+                  }
+                },
+                "required": [
+                  "min",
+                  "effects"
+                ]
+              }
+            }
+          },
+          "required": [
+            "op",
+            "tiers"
+          ]
         }
       ]
     },
@@ -49106,7 +49234,8 @@
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
                 "self_and_trigger",
-                "selected_units"
+                "selected_units",
+                "summoned"
               ]
             },
             "attack_delta": {
@@ -50247,7 +50376,8 @@
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
                 "self_and_trigger",
-                "selected_units"
+                "selected_units",
+                "summoned"
               ]
             },
             "keyword_id": {
@@ -57629,7 +57759,8 @@
                                 "all_units",
                                 "all_other_friendly_units",
                                 "self_and_trigger",
-                                "selected_units"
+                                "selected_units",
+                                "summoned"
                               ]
                             },
                             "attack_delta": {
@@ -61080,7 +61211,8 @@
                 "trigger_and_adjacent",
                 "adjacent_to_trigger",
                 "all_other_friendly_units",
-                "self_and_trigger"
+                "self_and_trigger",
+                "summoned"
               ]
             },
             "unit_class": {
@@ -64038,7 +64170,8 @@
                               "all_units",
                               "all_other_friendly_units",
                               "self_and_trigger",
-                              "selected_units"
+                              "selected_units",
+                              "summoned"
                             ]
                           },
                           "attack_delta": {
@@ -68103,7 +68236,14 @@
         ],
         "properties": {
           "counter_trigger": {
-            "type": "string"
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array"
+              }
+            ]
           },
           "play_target": {
             "type": "null"

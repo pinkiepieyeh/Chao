@@ -3,6 +3,11 @@ extends RefCounted
 ## Authoritative deterministic interpreter. An action commits once or has no effect.
 const Runtime = preload("res://scripts/core/card_runtime.gd")
 var state: Dictionary = {}
+## Layers of 庇护 (standard.shelter): each one cancels one destroy effect (#152).
+const SHELTER := "庇护"
+## Kredit slots: turns grow them to 12; effects (modify_kredit_slots) may raise them up to 24 (#144).
+const KREDIT_SLOTS := 12
+const KREDIT_SLOTS_MAX := 24
 var _budget: Dictionary = {}
 var _fault := ""
 var _action_kills: Dictionary = {}
@@ -1326,6 +1331,12 @@ func _play(player: int, hand_id: String, chosen: int, position: int = -1) -> voi
 			if state.scheduled.size() >= 32: _fault="RULE_BUDGET_EXCEEDED"
 			else: state.scheduled.append(scheduled)
 
+## A counter's triggers as a list: counter_trigger is one trigger or several (#137).
+static func counter_triggers(definition: Dictionary) -> Array:
+	var value: Variant = definition.get("counter_trigger")
+	if value is Array: return value
+	return [] if value == null else [str(value)]
+
 func _trigger_counters(actor: int, trigger: String, trigger_uid: int = -1, attack_target: int = -1) -> void:
 	if _counter_resolving: return
 	var owner := 1 - actor
@@ -1334,7 +1345,7 @@ func _trigger_counters(actor: int, trigger: String, trigger_uid: int = -1, attac
 		if state.winner != -1 or not _fault.is_empty() or _counter_canceled: return
 		if trigger in ["enemy_hq_attacked","enemy_unit_deployed","enemy_unit_moved_to_front","unit_attack_changed"] and _unit(trigger_uid).is_empty(): return
 		if trigger=="enemy_unit_attacked" and (_unit(trigger_uid).is_empty() or _unit(attack_target).is_empty()): return
-		if entry.card.definition.counter_trigger != trigger: continue
+		if not trigger in counter_triggers(entry.card.definition): continue
 		if trigger == "unit_attack_changed" and entry.card.definition.get("counter_filter") != null and not _attack_change_matches(entry.card.definition.counter_filter, owner, _unit(trigger_uid), int(_attack_change.get("delta", 0))): continue
 		if int(state.turn)!=int(entry.get("armed_turn",-2))+1 or int(state.active_player)!=actor: continue
 		var cost:=play_cost(owner,entry.card)
@@ -1694,6 +1705,11 @@ func _targets(target: String, context: Dictionary, filter: Dictionary = {}) -> A
 func _target_candidates(target: String, context: Dictionary) -> Array:
 	var targets := []
 	match target:
+		"summoned":
+			var summoned: Array = context.get("summoned_uids", [])
+			for i in range(summoned.size() - 1, -1, -1):
+				if not _unit(int(summoned[i])).is_empty(): return [int(summoned[i])]
+			return []
 		"self_and_trigger":
 			for uid in [int(context.uid),int(context.get("trigger_unit",-1))]:
 				if not _unit(uid).is_empty() and not uid in targets: targets.append(uid)
@@ -1843,6 +1859,17 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 		var saved := {"owner":owner,"card":context.card.duplicate(true),"chosen":int(context.chosen),"source_uid":int(context.uid),"context":context.duplicate(true),"lifetime":lifetime,"played_turn":int(state.turn),"groups":[-1],"ability":{"trigger":effect.trigger,"after_turns":effect.get("after_turns",1),"effects":effect.effects.duplicate(true)},"repeat":effect.get("repeat","once"),"times":effect.get("times",-1)}
 		if effect.has("once_per_card"): saved["once_per_card"]=effect.once_per_card
 		if _schedule_alive(saved): state.scheduled.append(saved)
+		return
+	if effect.op == "if_destroyed":
+		# Every tier whose minimum the group's destroy of selected units reached runs, lowest first (#151).
+		var destroyed := int(context.get("selected_destroyed_count", 0))
+		for tier in effect.tiers:
+			if destroyed < int(tier.min): continue
+			for child in tier.effects:
+				_spend("ops")
+				if state.winner!=-1 or not _fault.is_empty(): return
+				_effect(child,context)
+				_checkpoint()
 		return
 	if effect.op == "if_killed":
 		if not context.get("last_damage_killed",false): return
@@ -2013,7 +2040,7 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 			player.hp += clampi(int(effect.amount), 0, 10)
 		else:
 			var slots_before := int(player.max_credits)
-			player.max_credits = clampi(int(player.max_credits)+int(effect.amount),0,12)
+			player.max_credits = clampi(int(player.max_credits)+int(effect.amount),0,KREDIT_SLOTS_MAX)
 			player.credits = mini(int(player.credits),int(player.max_credits))
 			if int(player.max_credits) > slots_before: _emit_unit_event(affected,"kredit_slot_gained",-1,{})
 		return
@@ -2112,6 +2139,11 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 					_stat("heal", owner, context.card, mini(int(effect.amount), maxi(0,int(unit.max_hp)-int(unit.hp))), {"target_owner": unit.owner,"target_uid":uid})
 					unit.damage_taken = maxi(int(unit.get("damage_baseline",0))-int(unit.get("capacity_only",0)), int(unit.damage_taken) - int(effect.amount))
 				"destroy":
+					if stack_count(unit, SHELTER) > 0 and not unit.get("suppressed", false):
+						_custom_stack(unit, {"op":"modify_stacks","target":"self","stack":SHELTER,"amount":-1,"duration":"battle"}, context)
+						_stat("shelter", unit.owner, unit.card, 1, {"target_uid": uid})
+						_log("%s 的庇护抵消了消灭（剩余 %d 层）" % [_unit_definition(unit).name, stack_count(unit, SHELTER)])
+						continue
 					if effect.target=="selected_units" and unit.hp>0 and not unit.get("destroyed",false): context["selected_destroyed_count"]=int(context.get("selected_destroyed_count",0))+1
 					_stat("destroy", owner, context.card, 1, {"target_owner": unit.owner,"target_uid":uid})
 					unit["destroyed"] = true
@@ -2295,7 +2327,7 @@ func _start_turn() -> void:
 	player["deployments_previous_turn"]=player.get("deployments_this_turn",[])
 	player["deployments_this_turn"]=[]
 	player["turns_started"]=int(player.get("turns_started",0))+1
-	player.max_credits = mini(12, int(player.max_credits) + 1)
+	if int(player.max_credits) < KREDIT_SLOTS: player.max_credits = int(player.max_credits) + 1
 	player.credits = player.max_credits
 	_settle_play_taxes(int(state.active_player))
 	for unit in state.units:

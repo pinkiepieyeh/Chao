@@ -32,10 +32,12 @@ function validateRefAbilities(def,ref){
   if(!Array.isArray(ref.abilities)||!ref.abilities.length)fail('INVALID_KEYWORD_PARAMS','请为本卡填写「'+def.name+'」的触发、前提与效果。');
  }else if(ref.abilities!==undefined)fail('INVALID_KEYWORD_PARAMS','仅逐卡配置词条可填写独立效果。');
 }
-export const unboundEffects=effects=>effects.flatMap(e=>['if_drawn','if_killed','schedule'].includes(e.op)?unboundEffects(e.effects):e.op==='choose_effect'?e.options.filter(o=>!o.target).flatMap(o=>unboundEffects(o.effects)):[e]);
-export const walkEffects=effects=>effects.flatMap(e=>[e,...(['if_drawn','if_killed','schedule'].includes(e.op)?walkEffects(e.effects):e.op==='choose_effect'?e.options.flatMap(o=>walkEffects(o.effects)):[])]);
-const scopedEffects=(effects,trigger)=>effects.flatMap(effect=>[{effect,trigger},...(['if_drawn','if_killed','schedule'].includes(effect.op)?scopedEffects(effect.effects,effect.op==='schedule'?effect.trigger:trigger):effect.op==='choose_effect'?effect.options.flatMap(o=>scopedEffects(o.effects,trigger)):[])]);
-const leaves=effects=>walkEffects(effects).filter(e=>!['choose_effect','if_drawn','if_killed','schedule'].includes(e.op));
+// Effects nested under a branch op; if_destroyed keeps them in tiers (#151).
+export const branchChildren=e=>e.op==='if_destroyed'?(e.tiers??[]).flatMap(t=>t.effects??[]):(e.effects??[]);
+export const unboundEffects=effects=>effects.flatMap(e=>['if_drawn','if_killed','if_destroyed','schedule'].includes(e.op)?unboundEffects(branchChildren(e)):e.op==='choose_effect'?e.options.filter(o=>!o.target).flatMap(o=>unboundEffects(o.effects)):[e]);
+export const walkEffects=effects=>effects.flatMap(e=>[e,...(['if_drawn','if_killed','if_destroyed','schedule'].includes(e.op)?walkEffects(branchChildren(e)):e.op==='choose_effect'?e.options.flatMap(o=>walkEffects(o.effects)):[])]);
+const scopedEffects=(effects,trigger)=>effects.flatMap(effect=>[{effect,trigger},...(['if_drawn','if_killed','if_destroyed','schedule'].includes(effect.op)?scopedEffects(branchChildren(effect),effect.op==='schedule'?effect.trigger:trigger):effect.op==='choose_effect'?effect.options.flatMap(o=>scopedEffects(o.effects,trigger)):[])]);
+const leaves=effects=>walkEffects(effects).filter(e=>!['choose_effect','if_drawn','if_killed','if_destroyed','schedule'].includes(e.op));
 function effectPaths(effects){let paths=[[]];for(const e of effects)paths=e.op==='choose_effect'?paths.flatMap(p=>e.options.map(o=>[...p,...(o.target?[]:o.effects)])):paths.map(p=>[...p,e]);return paths;}
 const effectChooses=e=>['chosen','adjacent_to_chosen','chosen_and_adjacent'].includes(e.target)||[e.amount,e.attack_delta,e.health_delta,e.value].some(v=>unitValue(v)?.target==='chosen');
 const eventTriggers=['on_keyword_lost','own_unit_deployed','enemy_unit_deployed','own_order_played','enemy_order_played','own_card_played','enemy_card_played','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','own_unit_died','enemy_unit_died','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','own_counter_triggered','any_counter_triggered','unit_attack_changed','own_counter_returned','own_kredit_slot_gained','enemy_kredit_slot_gained'];
@@ -43,7 +45,10 @@ const keywordAura=a=>a.premise?.test==='unit_keyword'&&a.premise.target==='self'
 const positionQuery=q=>q.test==='unit_state'&&q.target==='self'&&['in_front','in_support'].includes(q.state);
 const triggerUnitEvents=['own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'];
 // Triggers whose event carries a unit that effects can address as trigger_unit.
-const hasTriggerUnit=(trigger,body)=>trigger==='on_reveal'?body?.counter_trigger!=='enemy_order_played':triggerUnitEvents.includes(trigger);
+// A counter's triggers as a list: counter_trigger is one trigger or several (#137).
+export const counterTriggers=body=>Array.isArray(body?.counter_trigger)?body.counter_trigger:body?.counter_trigger==null?[]:[body.counter_trigger];
+const counterAll=(body,allowed)=>{const t=counterTriggers(body);return t.length>0&&t.every(x=>allowed.includes(x));};
+const hasTriggerUnit=(trigger,body)=>trigger==='on_reveal'?!counterTriggers(body).includes('enemy_order_played'):triggerUnitEvents.includes(trigger);
 function extendedSemantics(a,body){
  if(a.event_filter!==undefined&&a.trigger!=='unit_attack_changed')fail('SEMANTIC_VALIDATION_FAILED','事件过滤条件仅用于攻击力变化时。');
  if(a.trigger==='on_keyword_lost'){if(!builtinIds.has(a.keyword_id)||body&&body.kind!=='unit')fail('SEMANTIC_VALIDATION_FAILED','失去词条事件需要单位及有效基础词条。');}else if(a.keyword_id!==undefined)fail('SEMANTIC_VALIDATION_FAILED','事件词条仅用于失去词条时。');
@@ -81,9 +86,9 @@ function extendedSemantics(a,body){
   if(e.op==='temporarily_remove'&&e.return_when==='source_leaves'&&body&&body.kind!=='unit')invalid('来源离场归还需要单位来源。');
   if(e.op==='temporarily_remove'&&e.return_cost!==undefined&&e.destination!=='hand')invalid('归还费用仅用于返回手牌。');
   if(e.op==='summon_origin'&&body&&body.kind!=='unit')invalid('召唤原型仅用于单位。');
-  if(e.target==='attack_target'&&!(['on_attack','after_attack','after_action'].includes(a.trigger)||a.trigger==='on_reveal'&&(!body||body.counter_trigger==='enemy_unit_attacked')))invalid('该时机没有攻击目标。');
+  if(e.target==='attack_target'&&!(['on_attack','after_attack','after_action'].includes(a.trigger)||a.trigger==='on_reveal'&&(!body||counterAll(body,['enemy_unit_attacked']))))invalid('该时机没有攻击目标。');
   for(const v of [e.amount,e.attack_delta,e.health_delta,e.value]){
-   if(v?.unit_stat?.target==='attack_target'&&!(['on_attack','after_attack','after_action'].includes(a.trigger)||a.trigger==='on_reveal'&&(!body||body.counter_trigger==='enemy_unit_attacked')))invalid('该时机没有攻击目标。');
+   if(v?.unit_stat?.target==='attack_target'&&!(['on_attack','after_attack','after_action'].includes(a.trigger)||a.trigger==='on_reveal'&&(!body||counterAll(body,['enemy_unit_attacked']))))invalid('该时机没有攻击目标。');
    if((v?.unit_stat??v?.keyword_param)?.target==='effect_target'&&!['set_attack','damage','heal','modify_stats','modify_stacks','set_stacks'].includes(e.op))invalid('结算目标属性仅用于设置攻击力。');
   }
   if(e.op==='schedule'){
@@ -97,15 +102,17 @@ function extendedSemantics(a,body){
   }
  }
  if(a.after_turns!==undefined&&!['next_own_turn_start','next_opponent_turn_start'].includes(a.trigger))fail('SEMANTIC_VALIDATION_FAILED','延迟回合数仅用于后续回合开始。');
- for(const e of a.effects)if(['if_drawn','if_killed','schedule'].includes(e.op)){
+ for(const e of a.effects)if(['if_drawn','if_killed','if_destroyed','schedule'].includes(e.op)){
   if(e.op==='schedule'){
    if(a.trigger==='while_active')fail('SEMANTIC_VALIDATION_FAILED','延迟效果不能放入持续光环。');
    if(e.lifetime==='source'&&body&&body.kind!=='unit')fail('SEMANTIC_VALIDATION_FAILED','来源在场期限需要单位。');
    if(e.lifetime==='target'&&!leaves(e.effects).some(effectChooses))fail('SEMANTIC_VALIDATION_FAILED','目标在场期限需要绑定 chosen。');
    if(e.times!==undefined&&!['each_turn','each_event'].includes(e.repeat))fail('SEMANTIC_VALIDATION_FAILED','重复次数仅用于每回合延迟效果。');
   }
-  extendedSemantics(e.op==='schedule'?{trigger:e.trigger,effects:e.effects,_scheduled:true}:{...a,effects:e.effects},body);
+  if(e.op==='if_destroyed')for(let i=1;i<e.tiers.length;i++)if(e.tiers[i].min<=e.tiers[i-1].min)fail('SEMANTIC_VALIDATION_FAILED','消灭数量分档须按数量从小到大且不重复。');
+  extendedSemantics(e.op==='schedule'?{trigger:e.trigger,effects:e.effects,_scheduled:true}:{...a,effects:branchChildren(e)},body);
  }
+ for(const path of effectPaths(a.effects))for(let i=0;i<path.length;i++)if(path[i].op==='if_destroyed'&&!path.slice(0,i).some(e=>e.op==='destroy'&&e.target==='selected_units'))fail('SEMANTIC_VALIDATION_FAILED','消灭数量分支须跟在同组“消灭所选单位”之后。');
  for(const path of effectPaths(a.effects))for(let i=0;i<path.length;i++)if(path[i].op==='if_killed'&&!path.slice(0,i).some(e=>e.op==='damage'))fail('SEMANTIC_VALIDATION_FAILED','击杀结果须跟在同一效果组的伤害操作之后。');
 
  if(a.repeat!==undefined){
@@ -164,7 +171,7 @@ function extendedSemantics(a,body){
    if(q.target==='self'&&body&&body.kind!=='unit')bad('该卡没有自身单位可读取。');
    if(q.target==='chosen'&&body&&!(a.target??body?.play_target))bad('读取所选单位需要选择目标。');
    if(q.target==='chosen'&&(a.target??body?.play_target)?.include_hq)bad('单位数值读取不能包含总部。');
-   if(q.target==='trigger_unit'&&(a.trigger==='on_reveal'?body?.counter_trigger==='enemy_order_played':!['own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'].includes(a.trigger)))bad('此事件没有可读取的触发单位。');
+   if(q.target==='trigger_unit'&&(a.trigger==='on_reveal'?counterTriggers(body).includes('enemy_order_played'):!['own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'].includes(a.trigger)))bad('此事件没有可读取的触发单位。');
   }
  }
 
@@ -178,7 +185,7 @@ function extendedSemantics(a,body){
   if(a.trigger==='while_active'&&!keywordAura(a)&&!positionQuery(q))bad('持续状态前提支持自身前线/后援线位置；自身词条条件仅用于固定攻击力光环。');
   if(q.target==='chosen'&&(a.trigger!=='on_play'||a.target||body&&(!body.play_target||body.play_target.include_hq)))bad('所选单位状态前提需要登场共用 play_target，且不包含总部。');
   if(q.target==='self'&&(['on_death','on_reveal'].includes(a.trigger)||body&&body.kind!=='unit'))bad('自身状态前提需要仍在场的来源单位。');
-  if(q.target==='trigger_unit'&&(!['on_reveal','own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'].includes(a.trigger)||a.trigger==='on_reveal'&&body?.counter_trigger==='enemy_order_played'))bad('此事件没有可查询的触发单位。');
+  if(q.target==='trigger_unit'&&(!['on_reveal','own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'].includes(a.trigger)||a.trigger==='on_reveal'&&counterTriggers(body).includes('enemy_order_played')))bad('此事件没有可查询的触发单位。');
  }
  if(a.damage_step!==undefined && a.trigger!=='on_damaged')bad('累计损伤阈值仅用于受伤后触发。');
  if(a.limit!==undefined && a.trigger!=='on_activate' && !eventTriggers.includes(a.trigger))bad('次数限制用于事件监听；延迟效果固定只执行一次。');
@@ -263,8 +270,8 @@ const semantics = (definition, template = false, allowEmptyOrder = false, tokenB
       if (!effectValidator(effect)) fail('SEMANTIC_VALIDATION_FAILED', '展开后的效果数值或结构无效。', 422, [{path: `/abilities/${ai}/effects/${ei}`, code: 'INVALID_EFFECT', message: '检查参数全部允许值是否都在该指令范围内。'}]);
       if (ability.trigger==='while_active' && effect.op!=='unit_limit' && effect.op!=='modify_play_cost' && (!['modify_stats','modify_operation_cost','modify_stacks','grant_keyword','modify_incoming_damage'].includes(effect.op)||!['self','all_units','all_friendly_units','all_other_friendly_units','all_enemy_units','adjacent_to_self','own_hq','enemy_hq'].includes(effect.target)||effect.duration!=='battle'||effect.op==='grant_keyword'&&!['core.guard','core.blitz','core.fury','core.immune'].includes(effect.keyword_id))) fail('SEMANTIC_VALIDATION_FAILED','场地持续效果支持所有友方/敌方单位的固定攻防、行动费或重甲变化，持续时间选本次在场期间。');
       if(effect.op==='set_combat_damage_multiplier' && (effect.divisor??1)>1 && !effect.rounding)fail('SEMANTIC_VALIDATION_FAILED','分数伤害需要指定向上或向下取整。');
-      if (effect.target === 'trigger_unit' && (!['on_reveal','own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'].includes(effectTrigger) || (effectTrigger==='on_reveal' && !template && definition.counter_trigger === 'enemy_order_played'))) fail('SEMANTIC_VALIDATION_FAILED', '触发单位仅用于部署单位或攻击总部的反制。');
-      if (effect.op === 'cancel_action' && (effectTrigger !== 'on_reveal' || (!template && !['enemy_order_played','enemy_hq_attacked','enemy_unit_attacked'].includes(definition.counter_trigger)))) fail('SEMANTIC_VALIDATION_FAILED', '取消行动仅用于打出指令或攻击总部的反制。');
+      if (effect.target === 'trigger_unit' && (!['on_reveal','own_unit_deployed','next_own_unit_deployed','enemy_unit_deployed','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','unit_attack_changed'].includes(effectTrigger) || (effectTrigger==='on_reveal' && !template && counterTriggers(definition).includes('enemy_order_played')))) fail('SEMANTIC_VALIDATION_FAILED', '触发单位仅用于部署单位或攻击总部的反制。');
+      if (effect.op === 'cancel_action' && (effectTrigger !== 'on_reveal' || (!template && !counterAll(definition,['enemy_order_played','enemy_hq_attacked','enemy_unit_attacked'])))) fail('SEMANTIC_VALIDATION_FAILED', '取消行动仅用于打出指令或攻击总部的反制。');
       if (unboundEffects(ability.effects).includes(effect) && effectChooses(effect)) { if (ability.trigger === 'on_play' && !ability.target) chosen = true; else if (!['on_play','on_reveal','on_death','on_summon','own_turn_start','own_turn_end','opponent_turn_start','opponent_turn_end','next_own_turn_start','next_opponent_turn_start','next_own_order_played','next_own_unit_deployed','own_unit_deployed','enemy_unit_deployed','own_order_played','enemy_order_played','own_card_played','enemy_card_played','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','own_unit_died','enemy_unit_died','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave','when_condition','on_activate'].includes(ability.trigger)) fail('SEMANTIC_VALIDATION_FAILED', '选定目标仅可用于部署、被召唤、阵亡或己方回合效果。'); }
       if (!template && effect.amount?.stat === 'source_base_health' && definition.kind !== 'unit') fail('SEMANTIC_VALIDATION_FAILED', '初始防御力只能读取来源单位卡牌。');
       if (effect.target === 'self' && (['on_death','on_reveal'].includes(ability.trigger) || (!template && definition.kind !== 'unit'))) fail('SEMANTIC_VALIDATION_FAILED', '此效果时机没有可用的自身单位。');
@@ -274,7 +281,7 @@ const semantics = (definition, template = false, allowEmptyOrder = false, tokenB
       if (effect.op === 'modify_kredit_slots' && effect.amount === 0) fail('SEMANTIC_VALIDATION_FAILED', '资源槽变化不能为零。');
       if (effect.op === 'fight' && (effect.source ?? 'self') === 'self' && (['on_death','on_reveal'].includes(ability.trigger) || (!template && definition.kind !== 'unit'))) fail('SEMANTIC_VALIDATION_FAILED','战斗效果需要仍在场的来源单位。');
       if ([effect.target, effect.source].includes('summoned') && !(ability.effects.indexOf(effect) < 0 ? ability.effects : ability.effects.slice(0, ability.effects.indexOf(effect))).some(e => e.op === 'summon')) fail('SEMANTIC_VALIDATION_FAILED','“刚召唤的单位”需要同一能力中先召唤。');
-      if (effect.op === 'redirect_attack' && (effectTrigger !== 'on_reveal' || (!template && !['enemy_hq_attacked','enemy_unit_attacked'].includes(definition.counter_trigger)))) fail('SEMANTIC_VALIDATION_FAILED','改变攻击对象仅用于攻击反制。');
+      if (effect.op === 'redirect_attack' && (effectTrigger !== 'on_reveal' || (!template && !counterAll(definition,['enemy_hq_attacked','enemy_unit_attacked'])))) fail('SEMANTIC_VALIDATION_FAILED','改变攻击对象仅用于攻击反制。');
       if (['swap_position','grant_action','move_unit'].includes(effect.op) && (effect.with === 'self' || effect.target === 'self') && (['on_death','on_reveal'].includes(ability.trigger) || (!template && definition.kind !== 'unit'))) fail('SEMANTIC_VALIDATION_FAILED','换位或行动需要仍在场的来源单位。');
       if (effect.op === 'grant_action' && effect.action === 'attack' && effect.attack_target === undefined) fail('SEMANTIC_VALIDATION_FAILED','授予攻击需要指定攻击对象。');
       if (effect.op === 'grant_action' && effect.action === 'move' && effect.attack_target !== undefined) fail('SEMANTIC_VALIDATION_FAILED','授予移动不需要攻击对象。');
@@ -530,7 +537,7 @@ export function compileCard(input, registry, {allowEmptyOrder = false, allowUnus
   }
   for(const body of [definition,...definition.tokens]){
     if(body.cost_reduction&&(body.cost_reduction.per_unit===undefined)===(body.cost_reduction.per_draw===undefined))fail('SEMANTIC_VALIDATION_FAILED','减费规则需要且只能选择按单位数或按抽牌数。');
-    if(body.counter_filter!=null&&body.counter_trigger!=='unit_attack_changed')fail('SEMANTIC_VALIDATION_FAILED','反制过滤条件仅用于攻击力变化反制。');
+    if(body.counter_filter!=null&&!counterTriggers(body).includes('unit_attack_changed'))fail('SEMANTIC_VALIDATION_FAILED','反制过滤条件仅用于攻击力变化反制。');
     if(body.cost_reduction?.per_unit)validatePremise({test:'compare',left:{count_units:body.cost_reduction.per_unit},cmp:'gte',right:0});
   }
   if(definition.kind==='hq')for(const adjustment of definition.draw_rule.adjustments??[]){validatePremise(adjustment.premise);if(premiseUnitQueries(adjustment.premise).length)fail('SEMANTIC_VALIDATION_FAILED','总部抽牌条件不能引用选中或自身单位。');}
@@ -610,7 +617,7 @@ export function rulesText(def) {
   for(const tier of def.cost_surcharge??[])lines.unshift(`若${premiseText(tier.premise)}，本卡费用+${tier.amount}（多档只取最高档）。`);
   if(def.cost_override)lines.unshift(`若${premiseText(def.cost_override.premise)}，本卡费用为${def.cost_override.value}。`);
   if(def.cost_reduction)lines.unshift(def.cost_reduction.per_draw?`在手牌中每抽一张牌，本卡费用减少${def.cost_reduction.amount}（最低0）。`:`本卡费用减少${unitCountText(def.cost_reduction.per_unit)}×${def.cost_reduction.amount}（最低0，出牌前计算）。`);
-  if (def.kind === 'counter') lines.unshift(`伏置：${def.counter_trigger==='unit_attack_changed'&&def.counter_filter?attackChangeText(def.counter_filter,true):counterNames[def.counter_trigger]}触发一次，触发时扣费；下次己方回合开始未触发则返回手牌。`);
+  if (def.kind === 'counter') lines.unshift(`伏置：${counterTriggers(def).map(t=>t==='unit_attack_changed'&&def.counter_filter?attackChangeText(def.counter_filter,true):counterNames[t]).join('或')}触发一次，触发时扣费；下次己方回合开始未触发则返回手牌。`);
   if(def.damage_bonuses?.length)lines.push('效果伤害：'+bonusText(def.damage_bonuses,keyword)+'。');
   const effect = (e, ability) => {
     const selector = ability.target ?? def.play_target;
@@ -625,6 +632,7 @@ export function rulesText(def) {
       case 'damage': return `对${target}造成 ${amountText(e.amount)} 点伤害`+(e.max_amount!==undefined?`，最多${e.max_amount}点`:``)+(e.caps?.length?`（${e.caps.map(c=>filterDetail(c.filter)+unitClassText(c.filter.unit_classes)+`最多${c.amount}点`).join("；")}）`:``)+(e.bonuses?.length?'（'+bonusText(e.bonuses,keyword)+'，合并结算）':'')+(e.on_kill_summon?`；若本次击杀，在其原位置为其控制者召唤【${def.tokens.find(t=>t.token_id===e.on_kill_summon)?.name??e.on_kill_summon}】`:'');
       case 'heal': return `为${target}恢复 ${amountText(e.amount)} 点生命`;
       case 'draw': return typeof e.amount==='object'?`${e.player === 'owner' ? '' : '敌方'}抽取与${valueName(e.amount)}相同数量的${drawFilterText(e.filter)}牌（最多10张，找不到则不抽）`:`${e.player === 'owner' ? '' : '敌方'}抽${e.amount}张${drawFilterText(e.filter)}牌${e.filter&&(Object.keys(e.filter).length>1||e.filter.faction_id||e.filter.keyword_id)?'（从牌组中找，找不到则不抽）':''}`;
+      case 'if_destroyed': return `按消灭数量（可叠加）：${e.tiers.map(t=>`消灭至少${t.min}个时，${rulesText({...def,keywords:[],abilities:[{...ability,effects:t.effects}]}).split('：').slice(1).join('：')}`).join('；')}`;
       case 'if_killed': return `${e.per_unit?'本次伤害每消灭一个单位，':'若刚才的伤害消灭单位，'}${rulesText({...def,keywords:[],abilities:[{...ability,effects:e.effects}]}).split('：').slice(1).join('：')}`;
       case 'schedule': return `${e.lifetime==='turn'?'本回合，':''}${['next_own_turn_start','next_opponent_turn_start'].includes(e.trigger)?(e.repeat==='each_turn'?'每个':'')+(e.trigger==='next_own_turn_start'?'己方':'敌方')+(e.repeat==='each_turn'?'回合开始':`后续第${e.after_turns??1}回合开始`):(e.repeat==='each_event'?'每次':'下一次')+({next_own_unit_deployed:'己方部署单位后',next_own_unit_entered:'友方单位入场时',next_own_unit_attacked_hq:'友方单位攻击敌方总部后',next_own_order_played:'己方指令结算后'})[e.trigger]}：${rulesText({...def,keywords:[],abilities:[{...ability,effects:e.effects}]}).split('：').slice(1).join('：')}${e.times?`（共${e.times}次）`:''}${e.once_per_card?'（每张卡本局一次）':''}`;
       case 'become_trigger_unit': return '变为被消灭单位的复制'+(e.inherit==='permanent'?'（保留自身永久强化）':'');

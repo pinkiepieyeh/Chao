@@ -47,6 +47,7 @@ const PATHS := {
 	"active": "M12 2v4 M12 18v4 M2 12h4 M18 12h4 M15 12a3 3 0 1 1-6 0a3 3 0 1 1 6 0z",
 	"liberated": "M7 11V7a5 5 0 0 1 9.6-2 M5 11h14v10H5z M12 15v2",
 	"veteran": "M5 9l7-4 7 4 M5 14l7-4 7 4 M5 19l7-4 7 4",
+	"shelter": "M12 3 20 6v6c0 5-4 8-8 9-4-1-8-4-8-9V6z M12 9v7 M8.5 12.5h7",
 }
 
 ## Which icon and colour each status badge id uses; ids not listed keep their text mark.
@@ -57,6 +58,7 @@ const BADGES := {
 	"pin": ["pin", ORANGE], "suppress": ["suppress", ORANGE], "damage": ["damage", ORANGE], "stats": ["stats", ORANGE], "attacks": ["attacks", ORANGE],
 	"on_death": ["on_death", WHITE], "own_turn_start": ["own_turn_start", WHITE], "own_turn_end": ["own_turn_end", WHITE],
 	"active": ["active", WHITE], "liberated": ["liberated", CYAN], "veteran": ["veteran", GOLD],
+	"stack_庇护": ["shelter", CYAN],
 }
 
 static var _cache: Dictionary = {}

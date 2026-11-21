@@ -139,6 +139,27 @@ for(const x of [1,3,10,11]){
  const hq={...base('hq'),health:20,draw_rule:{base:1},abilities:[]};
  for(const trigger of ['own_counter_returned','own_kredit_slot_gained','enemy_kredit_slot_gained'])add('hq/'+trigger,{...hq,abilities:[{trigger,effects:[{op:'draw',player:'owner',amount:1}]}]});
 }
+// 0.13.0 mechanics: multi-trigger counters, destroyed-count tiers, summoned targets.
+{
+ const reveal=effects=>({trigger:'on_reveal',effects});
+ for(const counter_trigger of [['enemy_unit_deployed','enemy_order_played'],['enemy_order_played','enemy_hq_attacked'],['enemy_hq_attacked','enemy_unit_attacked'],['unit_attack_changed','enemy_unit_acted'],['enemy_order_played','enemy_order_played'],['enemy_order_played'],[],['bogus','enemy_order_played']])
+  for(const effects of [[{op:'gain_hq_defense',player:'owner',amount:1}],[{op:'cancel_action'}],[{op:'redirect_attack',target:'random_friendly_unit'}],[{op:'damage',target:'trigger_unit',amount:1}],[{op:'damage',target:'attack_target',amount:1}]])
+   for(const counter_filter of [undefined,{side:'own'}])
+    add('0130/counter/'+JSON.stringify({counter_trigger,effects,counter_filter}),{...base('counter'),appearance:{emblem:'counter'},counter_trigger,...(counter_filter?{counter_filter}:{}),abilities:[reveal(effects)]});
+ const tokens=[{token_id:'g',name:'巨像',unit_class:'infantry',attack:2,health:2,keywords:[]}];
+ const sel={op:'select_units',side:'ally',min:1,max:5},kill={op:'destroy',target:'selected_units'},sum={op:'summon',token_id:'g',amount:1,row:'support'};
+ const buff={op:'modify_stats',target:'summoned',attack_delta:4,health_delta:4,duration:'battle'},fury={op:'grant_keyword',target:'summoned',keyword_id:'core.fury',keyword_version:1,duration:'battle'},bomber={op:'grant_unit_class',target:'summoned',unit_class:'bomber',duration:'battle'};
+ for(const kind of ['order','unit'])for(const effects of [
+  [sel,kill,sum,{op:'if_destroyed',tiers:[{min:1,effects:[buff]},{min:2,effects:[fury]},{min:3,effects:[bomber]},{min:4,effects:[buff]},{min:5,effects:[fury]}]}],
+  [sel,kill,sum,{op:'if_destroyed',tiers:[{min:2,effects:[buff]},{min:2,effects:[fury]}]}],
+  [sel,kill,sum,{op:'if_destroyed',tiers:[{min:3,effects:[buff]},{min:1,effects:[fury]}]}],
+  [sel,sum,{op:'if_destroyed',tiers:[{min:1,effects:[buff]}]},kill],
+  [sel,kill,{op:'if_destroyed',tiers:[{min:1,effects:[{op:'draw',player:'owner',amount:1}]}]}],
+  [sel,kill,{op:'if_destroyed',tiers:[]}],[sel,kill,{op:'if_destroyed',tiers:[{min:6,effects:[buff]}]}],
+  [sum,buff],[sum,fury],[sum,bomber],[buff],[{...sel,max:6},kill],[{...sel,min:5,max:5},kill],
+ ])add('0130/tiers/'+JSON.stringify({kind,effects}),{...base(kind),tokens,abilities:[{trigger:'on_play',effects}]});
+ for(const amount of [1,3,-3])add('0130/slots/'+amount,{...base('order'),abilities:[{trigger:'on_play',effects:[{op:'modify_kredit_slots',player:'owner',amount}]}]});
+}
 const dir = await mkdtemp(join(tmpdir(), 'frontline-mechanics-parity-'));
 try {
   const path = join(dir,'corpus.json'); await writeFile(path,JSON.stringify(corpus));

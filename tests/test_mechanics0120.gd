@@ -106,7 +106,7 @@ func _kredit_slot_gained() -> void:
 	_run_effect(g, {"op": "modify_kredit_slots", "player": "owner", "amount": 1}, context)
 	_check(int(g.state.players[seat].hand.size()) == hand + 1, "gaining a slot draws a card")
 	_check(int(g.state.players[enemy].max_hp) == enemy_hq + 1, "the enemy's listener sees it too")
-	g.state.players[seat].max_credits = 12
+	g.state.players[seat].max_credits = 24
 	hand = int(g.state.players[seat].hand.size())
 	_run_effect(g, {"op": "modify_kredit_slots", "player": "owner", "amount": 1}, context)
 	_check(int(g.state.players[seat].hand.size()) == hand, "no slot gained at the cap, no trigger")

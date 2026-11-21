@@ -235,11 +235,19 @@ static func validate_keyword(value: Dictionary) -> String:
 		return "模板操作超限或声明参数未使用"
 	return ""
 
+## Effects nested under a branch op; if_destroyed keeps them in tiers (#151).
+static func branch_children(e: Dictionary) -> Array:
+	if e.get("op") == "if_destroyed":
+		var children: Array = []
+		for tier in e.get("tiers", []): children.append_array(tier.get("effects", []))
+		return children
+	return e.get("effects", [])
+
 static func walk_effects(effects: Array) -> Array:
 	var result: Array = []
 	for e in effects:
 		result.append(e)
-		if e.op in ["if_drawn","if_killed","schedule"]: result.append_array(walk_effects(e.effects))
+		if e.op in ["if_drawn","if_killed","if_destroyed","schedule"]: result.append_array(walk_effects(branch_children(e)))
 		if e.op == "choose_effect":
 			for option in e.options: result.append_array(walk_effects(option.effects))
 	return result
@@ -249,14 +257,14 @@ static func _scoped_effects(effects: Array, trigger: String) -> Array:
 	var result: Array = []
 	for effect in effects:
 		result.append({"effect":effect,"trigger":trigger})
-		if effect.op in ["if_drawn","if_killed","schedule"]:
-			result.append_array(_scoped_effects(effect.effects,effect.trigger if effect.op=="schedule" else trigger))
+		if effect.op in ["if_drawn","if_killed","if_destroyed","schedule"]:
+			result.append_array(_scoped_effects(branch_children(effect),effect.trigger if effect.op=="schedule" else trigger))
 		elif effect.op == "choose_effect":
 			for option in effect.options: result.append_array(_scoped_effects(option.effects,trigger))
 	return result
 
 static func effect_leaves(effects: Array) -> Array:
-	return walk_effects(effects).filter(func(e): return not e.op in ["choose_effect","if_drawn","if_killed","schedule"])
+	return walk_effects(effects).filter(func(e): return not e.op in ["choose_effect","if_drawn","if_killed","if_destroyed","schedule"])
 
 static func _effect_paths(effects: Array) -> Array:
 	var paths: Array = [[]]
@@ -438,7 +446,7 @@ static func compile_card(definition: Dictionary, keyword_definitions: Array) -> 
 				if JSON.stringify(tier.premise).contains(marker): return _failure("加费条件仅查询出牌前公开场面或回合状态")
 		if body.has("cost_reduction") and body.cost_reduction.has("per_unit") == body.cost_reduction.has("per_draw"): return _failure("减费规则需要且只能选择按单位数或按抽牌数")
 		if body.has("cost_reduction") and body.cost_reduction.has("per_unit") and not _count_names_valid(body.cost_reduction.per_unit): return _failure("减费规则的单位名称筛选无效")
-		if body.get("counter_filter") != null and body.get("counter_trigger") != "unit_attack_changed": return _failure("反制过滤条件仅用于攻击力变化反制")
+		if body.get("counter_filter") != null and not "unit_attack_changed" in counter_triggers(body): return _failure("反制过滤条件仅用于攻击力变化反制")
 		var uses_chosen := false
 		var used_tokens := {}
 		if body.has("veteran"): used_tokens[body.veteran.token_id]=true
@@ -467,9 +475,9 @@ static func compile_card(definition: Dictionary, keyword_definitions: Array) -> 
 				var target: String = effect.get("target", "")
 				if target == "self" and (body.get("kind", "unit") != "unit" or ability.trigger in ["on_death", "on_reveal"]):
 					return _failure("指令或死亡触发不能使用 self")
-				if target == "trigger_unit" and (not effect_trigger in ["on_reveal","own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","on_stack_gained","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"] or (effect_trigger == "on_reveal" and body.get("counter_trigger") == "enemy_order_played")):
+				if target == "trigger_unit" and (not effect_trigger in ["on_reveal","own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","on_stack_gained","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"] or (effect_trigger == "on_reveal" and "enemy_order_played" in counter_triggers(body))):
 					return _failure("触发单位仅用于部署或总部攻击反制")
-				if effect.op == "cancel_action" and (effect_trigger != "on_reveal" or not body.get("counter_trigger") in ["enemy_order_played","enemy_hq_attacked","enemy_unit_attacked"]):
+				if effect.op == "cancel_action" and (effect_trigger != "on_reveal" or not _counter_all(body, ["enemy_order_played","enemy_hq_attacked","enemy_unit_attacked"])):
 					return _failure("取消行动仅用于指令或总部攻击反制")
 				if effect in _unbound_effects(ability.effects) and _effect_chooses(effect):
 					if not ability.trigger in ["on_play", "on_reveal", "on_death", "on_summon", "own_turn_start", "own_turn_end", "opponent_turn_start", "opponent_turn_end", "next_own_turn_start", "next_opponent_turn_start", "next_own_order_played","next_own_unit_deployed", "own_unit_deployed", "enemy_unit_deployed", "own_order_played", "enemy_order_played", "own_card_played", "enemy_card_played", "after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked", "on_damaged", "on_stack_gained","after_attack","after_move","after_action","own_unit_died","enemy_unit_died","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","when_condition","on_activate"]:
@@ -487,7 +495,7 @@ static func compile_card(definition: Dictionary, keyword_definitions: Array) -> 
 				if effect.op == "fight" and effect.get("source","self") == "self" and (body.get("kind","unit") != "unit" or ability.trigger in ["on_death","on_reveal"]): return _failure("战斗效果需要仍在场的来源单位")
 				var summoned_error := _summoned_error(effect, ability)
 				if not summoned_error.is_empty(): return _failure(summoned_error)
-				if effect.op == "redirect_attack" and (effect_trigger != "on_reveal" or not body.get("counter_trigger") in ["enemy_hq_attacked","enemy_unit_attacked"]): return _failure("改变攻击对象仅用于攻击反制")
+				if effect.op == "redirect_attack" and (effect_trigger != "on_reveal" or not _counter_all(body, ["enemy_hq_attacked","enemy_unit_attacked"])): return _failure("改变攻击对象仅用于攻击反制")
 				if effect.op in ["swap_position","grant_action","move_unit"] and (effect.get("with") == "self" or effect.get("target") == "self") and (body.get("kind","unit") != "unit" or ability.trigger in ["on_death","on_reveal"]): return _failure("换位或行动需要仍在场的来源单位")
 				if effect.op == "grant_action" and effect.get("action") == "attack" and not effect.has("attack_target"): return _failure("授予攻击需要指定攻击对象")
 				if effect.op == "grant_action" and effect.get("action") == "move" and effect.has("attack_target"): return _failure("授予移动不需要攻击对象")
@@ -553,9 +561,20 @@ static func _summoned_error(effect: Dictionary, ability: Dictionary) -> String:
 		if other.get("op") == "summon": return ""
 	return "“刚召唤的单位”需要同一能力中先召唤"
 
+## A counter's triggers as a list: counter_trigger is one trigger or several (#137).
+static func counter_triggers(body: Dictionary) -> Array:
+	var value: Variant = body.get("counter_trigger")
+	if value is Array: return value
+	return [] if value == null else [str(value)]
+
+## Whether a counter has triggers and every one of them is allowed.
+static func _counter_all(body: Dictionary, allowed: Array) -> bool:
+	var triggers := counter_triggers(body)
+	return not triggers.is_empty() and triggers.all(func(t): return t in allowed)
+
 ## Triggers whose event carries a unit that effects can address as trigger_unit.
 static func _has_trigger_unit(trigger: String, body: Dictionary) -> bool:
-	if trigger == "on_reveal": return body.get("counter_trigger") != "enemy_order_played"
+	if trigger == "on_reveal": return not "enemy_order_played" in counter_triggers(body)
 	return trigger in ["own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","on_stack_gained","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"]
 
 static func canonical(value: Variant) -> String:
@@ -713,8 +732,10 @@ static func rules_text(card: Dictionary) -> String:
 		targets["chosen"] = "所选"+_selector_text(selector)
 	if definition.get("kind") == "counter":
 		var counter_names := {"enemy_unit_deployed":"对方部署单位后", "enemy_order_played":"对方打出指令时", "enemy_unit_attacked":"对方攻击友方单位时", "enemy_hq_attacked":"对方攻击己方总部时", "enemy_unit_acted":"对方单位主动攻击或移动后", "enemy_unit_moved_to_front":"对方单位主动移动到前线后", "enemy_unit_ability_triggered":"对方单位能力结算后", "unit_attack_changed":"单位攻击力变化时"}
-		var counter_when: String = counter_names.get(definition.get("counter_trigger"), "")
-		if definition.get("counter_trigger") == "unit_attack_changed" and definition.get("counter_filter") is Dictionary: counter_when = attack_change_text(definition.counter_filter, true)
+		var whens := PackedStringArray()
+		for when in counter_triggers(definition):
+			whens.append(attack_change_text(definition.counter_filter, true) if when == "unit_attack_changed" and definition.get("counter_filter") is Dictionary else str(counter_names.get(when, "")))
+		var counter_when: String = "或".join(whens)
 		lines.append("伏置：%s触发一次，触发时扣费；下次己方回合开始未触发则返回手牌。" % counter_when)
 	for keyword in definition.get("keywords", []):
 		lines.append(keyword_name(keyword.id))
@@ -736,6 +757,10 @@ static func rules_text(card: Dictionary) -> String:
 			var duration := "" if ability.trigger == "while_active" else "本回合" if effect.get("duration", "battle") == "end_of_turn" else "永久" if effect.get("duration") == "match" else "直到下个己方回合开始" if effect.get("duration")=="next_own_turn_start" else "直到下个敌方回合结束" if effect.get("duration")=="next_opponent_turn_end" else "在场期间"
 			match effect.op:
 				"select_units": effects.append("选择%d～%d个%s%s单位" % [effect.min,effect.max,"友方" if effect.side=="ally" else "敌方" if effect.side=="enemy" else "","【%s】"%effect.unit_filter.name_contains if effect.get("unit_filter",{}).has("name_contains") else ""])
+				"if_destroyed":
+					var tiers := PackedStringArray()
+					for tier in effect.tiers: tiers.append("消灭至少%d个时，%s" % [int(tier.min), choice_text({"effects":tier.effects},definition,ability)])
+					effects.append("按消灭数量（可叠加）：" + "；".join(tiers))
 				"if_killed": effects.append(("本次伤害每消灭一个单位，" if effect.get("per_unit",false) else "若刚才的伤害消灭单位，")+choice_text({"effects":effect.effects},definition,ability))
 				"schedule":
 					var when: String = ""
@@ -991,11 +1016,11 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 		if e.op=="temporarily_remove" and e.return_when=="source_leaves" and not body.is_empty() and body.get("kind")!="unit": return "来源离场归还需要单位来源"
 		if e.op=="temporarily_remove" and e.has("return_cost") and e.destination!="hand": return "归还费用仅用于返回手牌"
 		if e.op=="summon_origin" and not body.is_empty() and body.get("kind")!="unit": return "召唤原型仅用于单位"
-		if e.get("target")=="attack_target" and not (a.trigger in ["on_attack","after_attack","after_action"] or a.trigger=="on_reveal" and (body.is_empty() or body.get("counter_trigger")=="enemy_unit_attacked")): return "该时机没有攻击目标"
+		if e.get("target")=="attack_target" and not (a.trigger in ["on_attack","after_attack","after_action"] or a.trigger=="on_reveal" and (body.is_empty() or _counter_all(body, ["enemy_unit_attacked"]))): return "该时机没有攻击目标"
 		for v in [e.get("amount"),e.get("attack_delta"),e.get("health_delta"),e.get("value")]:
 			if v is Dictionary and (v.has("unit_stat") or v.has("keyword_param")):
 				var read: Dictionary = v.get("unit_stat",v.get("keyword_param",{}))
-				if read.target=="attack_target" and not (a.trigger in ["on_attack","after_attack","after_action"] or a.trigger=="on_reveal" and (body.is_empty() or body.get("counter_trigger")=="enemy_unit_attacked")): return "该时机没有攻击目标"
+				if read.target=="attack_target" and not (a.trigger in ["on_attack","after_attack","after_action"] or a.trigger=="on_reveal" and (body.is_empty() or _counter_all(body, ["enemy_unit_attacked"]))): return "该时机没有攻击目标"
 				if read.target=="effect_target" and not e.op in ["set_attack","damage","heal","modify_stats","modify_stacks","set_stacks"]: return "结算目标属性仅用于设置攻击力"
 		if e.op=="schedule":
 			if e.get("repeat")=="each_event" and not e.trigger in ["next_own_unit_deployed","next_own_order_played","next_own_unit_entered","next_own_unit_attacked_hq"]: return "每次事件监听需要事件时机"
@@ -1011,21 +1036,27 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 				if rule.has("on_kill_summon"): return "附加能力不使用来源卡衍生模板"
 	if a.has("after_turns") and not a.trigger in ["next_own_turn_start","next_opponent_turn_start"]: return "延迟回合数仅用于后续回合开始"
 	for e in a.effects:
-		if e.op in ["if_drawn","if_killed","schedule"]:
+		if e.op in ["if_drawn","if_killed","if_destroyed","schedule"]:
 			if e.op=="schedule":
 				if a.trigger=="while_active": return "延迟效果不能放入持续光环"
 				if e.get("lifetime")=="source" and not body.is_empty() and body.get("kind")!="unit": return "来源在场期限需要单位"
 				if e.get("lifetime")=="target" and not effect_leaves(e.effects).any(_effect_chooses): return "目标在场期限需要绑定 chosen"
 				if e.has("times") and not e.get("repeat") in ["each_turn","each_event"]: return "重复次数仅用于每回合延迟效果"
-			var child: Dictionary=a.duplicate(true);child.effects=e.effects
+			if e.op=="if_destroyed":
+				for i in e.tiers.size():
+					if i > 0 and int(e.tiers[i].min) <= int(e.tiers[i-1].min): return "消灭数量分档须按数量从小到大且不重复"
+			var child: Dictionary=a.duplicate(true);child.effects=branch_children(e)
 			if e.op=="schedule": child={"trigger":e.trigger,"effects":e.effects,"_scheduled":true}
 			var error:=_extended_error(child,body)
 			if not error.is_empty():return error
 	for path in _effect_paths(a.effects):
 		var damage_seen:=false
+		var destroy_seen:=false
 		for e in path:
 			if e.op=="if_killed" and not damage_seen: return "击杀结果须跟在同组伤害之后"
+			if e.op=="if_destroyed" and not destroy_seen: return "消灭数量分支须跟在同组“消灭所选单位”之后"
 			if e.op=="damage": damage_seen=true
+			if e.op=="destroy" and e.get("target")=="selected_units": destroy_seen=true
 	if a.has("event_scope") and not a.trigger in ["own_unit_moved","own_unit_retreated","own_unit_returned","own_unit_attacked","own_unit_entered","own_unit_deployed","own_unit_died"]: return "事件筛选需要友方单位事件"
 	for e in a.effects:
 		if e.op=="unit_limit" and (a.trigger!="while_active" or not body.is_empty() and body.get("kind")!="field"): return "单位上限仅用于场地持续效果"
@@ -1091,7 +1122,7 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 			if q.target=="self" and not body.is_empty() and body.get("kind")!="unit":return "没有自身单位可读取"
 			var selector:Variant=a.get("target",body.get("play_target"))
 			if q.target=="chosen" and (selector==null and not body.is_empty() or selector is Dictionary and selector.get("include_hq",false)):return "读取所选单位需要不含总部的目标"
-			if q.target=="trigger_unit" and (a.trigger=="on_reveal" and body.get("counter_trigger")=="enemy_order_played" or a.trigger!="on_reveal" and not a.trigger in ["own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"]):return "此事件没有可读取的触发单位"
+			if q.target=="trigger_unit" and (a.trigger=="on_reveal" and "enemy_order_played" in counter_triggers(body) or a.trigger!="on_reveal" and not a.trigger in ["own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"]):return "此事件没有可读取的触发单位"
 
 	for selector in [a.get("target"),body.get("play_target")]:
 		if selector is Dictionary and (selector.has("unit_classes") or selector.has("faction_id")) and selector.get("include_hq",false): return "兵种目标不能同时选择总部"
@@ -1102,7 +1133,7 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 		if a.trigger == "while_active" and not _keyword_aura(a) and not (q.test=="unit_state" and q.target=="self" and q.state in ["in_front","in_support"]): return "持续状态前提支持自身前线/后援线位置；自身词条条件仅用于固定攻击力光环"
 		if q.target == "chosen" and (a.trigger != "on_play" or a.has("target") or (not body.is_empty() and (body.get("play_target") == null or body.play_target.get("include_hq",false)))): return "所选单位状态前提需要登场共用 play_target，且不包含总部"
 		if q.target == "self" and (a.trigger in ["on_death","on_reveal"] or (not body.is_empty() and body.get("kind","unit") != "unit")): return "自身状态前提需要仍在场的来源单位"
-		if q.target == "trigger_unit" and (not a.trigger in ["on_reveal","own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","on_stack_gained","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"] or (a.trigger == "on_reveal" and body.get("counter_trigger") == "enemy_order_played")): return "此事件没有可查询的触发单位"
+		if q.target == "trigger_unit" and (not a.trigger in ["on_reveal","own_unit_deployed","next_own_unit_deployed","enemy_unit_deployed","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","on_stack_gained","after_attack","after_move","after_action","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","unit_attack_changed"] or (a.trigger == "on_reveal" and "enemy_order_played" in counter_triggers(body))): return "此事件没有可查询的触发单位"
 	var events := ["on_keyword_lost","own_unit_deployed","enemy_unit_deployed","own_order_played","enemy_order_played","own_card_played","enemy_card_played","after_attacked","own_unit_moved","enemy_unit_moved","on_kill","on_attacked","on_damaged","on_stack_gained","after_attack","after_move","after_action","own_unit_died","enemy_unit_died","on_attack","own_unit_entered","enemy_unit_entered","own_unit_attacked_hq","enemy_unit_attacked_hq","own_unit_became_veteran","enemy_unit_became_veteran","on_veteran","own_unit_attacked","enemy_unit_attacked","own_unit_retreated","enemy_unit_retreated","own_unit_returned","enemy_unit_returned","on_leave","own_counter_triggered","any_counter_triggered","unit_attack_changed","own_counter_returned","own_kredit_slot_gained","enemy_kredit_slot_gained"]
 	if a.has("damage_step") and a.trigger != "on_damaged": return "累计损伤阈值仅用于受伤后"
 	if a.has("event_filter") and a.trigger != "unit_attack_changed": return "事件过滤条件仅用于攻击力变化时"
@@ -1514,7 +1545,7 @@ static func _valid_parameter(value: Variant, spec: Dictionary) -> bool:
 static func _unbound_effects(effects: Array) -> Array:
 	var result := []
 	for e in effects:
-		if e.op in ["if_drawn","if_killed","schedule"]:result.append_array(_unbound_effects(e.effects))
+		if e.op in ["if_drawn","if_killed","if_destroyed","schedule"]:result.append_array(_unbound_effects(branch_children(e)))
 		elif e.op=="choose_effect":
 			for option in e.options:
 				if not option.has("target"):result.append_array(_unbound_effects(option.effects))
