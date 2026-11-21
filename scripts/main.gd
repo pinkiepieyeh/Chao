@@ -148,6 +148,7 @@ func _ready() -> void:
 	audio_system = Audio.new()
 	audio_system.name = "Audio"
 	add_child(audio_system)
+	audio_system.custom_music_notice.connect(_notify)
 	var backdrop := Control.new()
 	menu_backdrop=backdrop
 	backdrop.set_script(BackgroundScript)
@@ -2520,6 +2521,52 @@ func _settings() -> void:
 func _audio_dialog() -> void:
 	_audio_controls(_modal("声音与动效"))
 
+## Local music folder picker. Desktop only: Android/iOS/Web builds have no usable folder access here.
+func _custom_music_controls(panel:VBoxContainer) -> void:
+	if not OS.has_feature("pc") or mobile: return
+	var section := _vbox(panel,8)
+	section.name = "CustomMusic"
+	_label(section,"自定义音乐",20)
+	var folder := _text(section,"",14,MUTED)
+	folder.name = "CustomMusic_folder"
+	var status := _text(section,"",14,MUTED)
+	status.name = "CustomMusic_status"
+	var row := _hbox(section,10)
+	var refresh := func():
+		var path := audio_system.custom_music_dir()
+		folder.text = "文件夹：" + (path if not path.is_empty() else "未选择")
+		status.text = audio_system.custom_music_status()
+	var pick := _button(row,"选择文件夹",func():
+		var dialog := FileDialog.new()
+		dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
+		dialog.access = FileDialog.ACCESS_FILESYSTEM
+		dialog.use_native_dialog = true
+		dialog.title = "选择音乐文件夹"
+		var current := audio_system.custom_music_dir()
+		if not current.is_empty() and DirAccess.dir_exists_absolute(current): dialog.current_dir = current
+		dialog.dir_selected.connect(func(path:String):
+			audio_system.set_custom_music_dir(path)
+			if is_instance_valid(folder) and is_instance_valid(status): refresh.call()
+			dialog.queue_free()
+		)
+		dialog.canceled.connect(dialog.queue_free)
+		add_child(dialog)
+		dialog.popup_centered_ratio(0.6)
+	)
+	pick.name = "CustomMusic_pick"
+	var clear := _button(row,"清除",func():
+		audio_system.set_custom_music_dir("")
+		refresh.call()
+	)
+	clear.name = "CustomMusic_clear"
+	_spacer(row)
+	var scopes := ["both","menu","battle"]
+	var scope := _option(row,["替换菜单和战斗音乐","仅替换菜单音乐","仅替换战斗音乐"],maxi(0,scopes.find(audio_system.custom_music_scope())))
+	scope.name = "CustomMusic_scope"
+	scope.item_selected.connect(func(index): audio_system.set_custom_music_scope(scopes[index]))
+	_text(section,"支持 mp3 / ogg / wav，随机播放，最多读取 %d 首（含一层子文件夹）。网易云等平台下载的 .ncm 是加密格式，无法播放；请使用你自己电脑上的普通音频文件。音乐只在本机播放，不会上传，也不会让对手听到。对局中场地卡自带的音乐仍会优先播放。" % Audio.CUSTOM_SCAN_LIMIT,13,MUTED)
+	refresh.call()
+
 func _audio_controls(panel:VBoxContainer) -> void:
 	for item in [["master","总音量"],["music","音乐"],["effects","音效"]]:
 		var key: String = item[0]
@@ -2553,6 +2600,7 @@ func _audio_controls(panel:VBoxContainer) -> void:
 		toggle.custom_minimum_size.y = 48 if mobile else 32
 		toggle.toggled.connect(func(value): audio_system.set_preference(key,value))
 		panel.add_child(toggle)
+	_custom_music_controls(panel)
 	var credits := _hbox(panel)
 	_spacer(credits)
 	_button(credits,"音频来源",func():
