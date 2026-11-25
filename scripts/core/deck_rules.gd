@@ -3,6 +3,11 @@ extends RefCounted
 const DECK_SIZE := 40
 const FACTION_CATEGORIES := ["large", "normal", "small"]
 const FACTION_CATEGORY_NAMES := {"large":"大阵营", "normal":"普通阵营", "small":"小阵营"}
+## A card's composition category (#50): its own "category", else its faction's (the older place for it), else normal.
+static func card_category(definition: Dictionary, registry: Dictionary) -> String:
+	if definition.get("category") is String: return str(definition.category)
+	return str(registry.get(str(definition.get("faction_id", "")), {}).get("category", "normal"))
+
 ## A faction marked test in the catalog (#100): hidden in the deck builder unless shown, free of composition limits.
 static func is_test_faction(registry: Dictionary, id: String) -> bool:
 	return not id.is_empty() and bool(registry.get(id, {}).get("test", false))
@@ -26,7 +31,7 @@ static func composition(cards: Array, registry: Dictionary, primary: String, sec
 		# Gold (elite) cards with a sin only go into decks whose main sin is that sin (#81).
 		if d.get("rarity")=="elite" and slot!="main": result.error="“%s”是金卡，只能放入主罪孽为%s的牌组。" % [title, SinCatalog.label(str(d.get("sin")))]; return result
 		if not id.is_empty() and not registry.has(id): result.error="“%s”的阵营不存在，请刷新卡库。" % title; return result
-		var category: String = str(registry.get(id, {}).get("category", "normal"))
+		var category := card_category(d, registry)
 		if not category in FACTION_CATEGORIES: result.error="阵营类别无效，请刷新卡库。"; return result
 		if category=="large" and slot=="ally": result.error="“%s”属于大阵营，不能计入副罪孽。" % title; return result
 		if category=="small" and slot=="main": result.error="“%s”属于小阵营，不能计入主罪孽。" % title; return result

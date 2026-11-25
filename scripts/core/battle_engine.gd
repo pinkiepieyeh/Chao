@@ -1694,6 +1694,7 @@ func _matches_unit_filter(unit: Dictionary, filter: Dictionary) -> bool:
 
 func _targets(target: String, context: Dictionary, filter: Dictionary = {}) -> Array:
 	var targets := _target_candidates(target,context)
+	if filter.get("not_chosen", false): targets = targets.filter(func(uid): return int(uid) != int(context.get("chosen", -1)))
 	if not filter.is_empty(): targets = targets.filter(func(uid): return _matches_unit_filter(_unit(uid),filter))
 	if target.begins_with("random_") and not targets.is_empty():
 		var selected: int = targets[_random_index(targets.size())]
@@ -1764,6 +1765,7 @@ func _effect_value(value: Variant, context: Dictionary) -> int:
 	if value.has("equipment"): return int(_unit(context.uid).get("equipment",{}).get(value.equipment,0))*int(value.scale)
 	var stat: String = value.get("stat", "")
 	if stat == "selected_destroyed_count": return int(context.get("selected_destroyed_count",0))
+	if stat in ["destroyed_attack_total", "destroyed_health_total"]: return int(context.get(stat, 0))
 	if stat == "event_damage": return int(context.get("event_damage",0))
 	if stat in ["friendly_turn_number","enemy_turn_number"]: return int(state.players[int(context.owner) if stat=="friendly_turn_number" else 1-int(context.owner)].get("turns_started",0))
 	if stat == "source_destroyed_count": return int(_action_kills.get(_source_key(context),0))
@@ -2144,6 +2146,9 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 						_stat("shelter", unit.owner, unit.card, 1, {"target_uid": uid})
 						_log("%s 的庇护抵消了消灭（剩余 %d 层）" % [_unit_definition(unit).name, stack_count(unit, SHELTER)])
 						continue
+					if unit.hp>0 and not unit.get("destroyed",false):
+						context["destroyed_attack_total"]=int(context.get("destroyed_attack_total",0))+maxi(0,int(unit.attack))
+						context["destroyed_health_total"]=int(context.get("destroyed_health_total",0))+maxi(0,int(unit.hp))
 					if effect.target=="selected_units" and unit.hp>0 and not unit.get("destroyed",false): context["selected_destroyed_count"]=int(context.get("selected_destroyed_count",0))+1
 					_stat("destroy", owner, context.card, 1, {"target_owner": unit.owner,"target_uid":uid})
 					unit["destroyed"] = true

@@ -275,7 +275,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -848,6 +850,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -1315,7 +1320,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -1888,6 +1895,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -2087,7 +2097,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -2545,7 +2557,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -3166,6 +3180,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -3476,6 +3493,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -3711,6 +3731,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -3974,6 +3997,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -4323,6 +4349,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -4821,6 +4850,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -5131,6 +5163,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -5589,6 +5624,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -5821,6 +5859,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -6054,6 +6095,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -6297,6 +6341,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -6529,6 +6576,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -6761,6 +6811,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -7015,6 +7068,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -7356,6 +7412,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -7993,6 +8052,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -8254,6 +8316,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -8884,6 +8949,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             },
@@ -9729,6 +9797,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             }
@@ -9794,7 +9865,9 @@
                                                         "enemy_units_played_this_game",
                                                         "hand_shortfall",
                                                         "friendly_kredit_slots",
-                                                        "enemy_kredit_slots"
+                                                        "enemy_kredit_slots",
+                                                        "destroyed_attack_total",
+                                                        "destroyed_health_total"
                                                       ]
                                                     }
                                                   },
@@ -10948,6 +11021,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             },
@@ -11215,6 +11291,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             },
@@ -11481,6 +11560,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             }
@@ -11704,6 +11786,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             }
@@ -11932,6 +12017,9 @@
                                                   "minItems": 1,
                                                   "maxItems": 8,
                                                   "uniqueItems": true
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               }
                                             }
@@ -11997,7 +12085,9 @@
                                                         "enemy_units_played_this_game",
                                                         "hand_shortfall",
                                                         "friendly_kredit_slots",
-                                                        "enemy_kredit_slots"
+                                                        "enemy_kredit_slots",
+                                                        "destroyed_attack_total",
+                                                        "destroyed_health_total"
                                                       ]
                                                     }
                                                   },
@@ -12604,6 +12694,9 @@
                                                     "even",
                                                     "odd"
                                                   ]
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               },
                                               "required": [
@@ -12722,6 +12815,9 @@
                                                     "even",
                                                     "odd"
                                                   ]
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               },
                                               "required": [
@@ -12832,6 +12928,9 @@
                                                     "even",
                                                     "odd"
                                                   ]
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               },
                                               "required": [
@@ -13025,6 +13124,9 @@
                                                     "even",
                                                     "odd"
                                                   ]
+                                                },
+                                                "not_chosen": {
+                                                  "const": true
                                                 }
                                               },
                                               "required": [
@@ -13701,6 +13803,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -13954,6 +14059,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -14244,6 +14352,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -14534,6 +14645,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -15308,6 +15422,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -15426,6 +15543,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -15834,6 +15954,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           },
@@ -16546,6 +16669,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           }
@@ -16611,7 +16737,9 @@
                                                       "enemy_units_played_this_game",
                                                       "hand_shortfall",
                                                       "friendly_kredit_slots",
-                                                      "enemy_kredit_slots"
+                                                      "enemy_kredit_slots",
+                                                      "destroyed_attack_total",
+                                                      "destroyed_health_total"
                                                     ]
                                                   }
                                                 },
@@ -17562,6 +17690,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           },
@@ -17766,6 +17897,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           },
@@ -17969,6 +18103,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           }
@@ -18129,6 +18266,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           }
@@ -18294,6 +18434,9 @@
                                                 "minItems": 1,
                                                 "maxItems": 8,
                                                 "uniqueItems": true
+                                              },
+                                              "not_chosen": {
+                                                "const": true
                                               }
                                             }
                                           }
@@ -18359,7 +18502,9 @@
                                                       "enemy_units_played_this_game",
                                                       "hand_shortfall",
                                                       "friendly_kredit_slots",
-                                                      "enemy_kredit_slots"
+                                                      "enemy_kredit_slots",
+                                                      "destroyed_attack_total",
+                                                      "destroyed_health_total"
                                                     ]
                                                   }
                                                 },
@@ -19195,6 +19340,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -19456,6 +19604,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -19686,6 +19837,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -19938,6 +20092,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -20279,6 +20436,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -20387,6 +20547,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -20626,6 +20789,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -21562,7 +21728,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -22006,7 +22174,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -23131,7 +23301,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -23704,6 +23876,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -24171,7 +24346,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -24744,6 +24921,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -24943,7 +25123,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -25401,7 +25583,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -26022,6 +26206,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -26332,6 +26519,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -26567,6 +26757,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -26830,6 +27023,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -27179,6 +27375,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -27677,6 +27876,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -27987,6 +28189,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -28445,6 +28650,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -28677,6 +28885,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -28910,6 +29121,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -29153,6 +29367,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -29385,6 +29602,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -29617,6 +29837,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -29871,6 +30094,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -30212,6 +30438,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -30849,6 +31078,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -31110,6 +31342,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -31740,6 +31975,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -32585,6 +32823,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -32650,7 +32891,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -33804,6 +34047,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -34071,6 +34317,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -34337,6 +34586,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -34560,6 +34812,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -34788,6 +35043,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -34853,7 +35111,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -35460,6 +35720,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -35578,6 +35841,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -35688,6 +35954,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -35881,6 +36150,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -36557,6 +36829,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -36810,6 +37085,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -37100,6 +37378,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -37390,6 +37671,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -37888,6 +38172,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -38006,6 +38293,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -38414,6 +38704,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           },
@@ -39126,6 +39419,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -39191,7 +39487,9 @@
                                       "enemy_units_played_this_game",
                                       "hand_shortfall",
                                       "friendly_kredit_slots",
-                                      "enemy_kredit_slots"
+                                      "enemy_kredit_slots",
+                                      "destroyed_attack_total",
+                                      "destroyed_health_total"
                                     ]
                                   }
                                 },
@@ -40142,6 +40440,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           },
@@ -40346,6 +40647,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           },
@@ -40549,6 +40853,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -40709,6 +41016,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -40874,6 +41184,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -40939,7 +41252,9 @@
                                       "enemy_units_played_this_game",
                                       "hand_shortfall",
                                       "friendly_kredit_slots",
-                                      "enemy_kredit_slots"
+                                      "enemy_kredit_slots",
+                                      "destroyed_attack_total",
+                                      "destroyed_health_total"
                                     ]
                                   }
                                 },
@@ -41775,6 +42090,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -42036,6 +42354,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -42266,6 +42587,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -42518,6 +42842,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -42760,6 +43087,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -42999,6 +43329,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -43400,7 +43733,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -43973,6 +44308,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -44440,7 +44778,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -45013,6 +45353,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -45212,7 +45555,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -45670,7 +46015,9 @@
                         "enemy_units_played_this_game",
                         "hand_shortfall",
                         "friendly_kredit_slots",
-                        "enemy_kredit_slots"
+                        "enemy_kredit_slots",
+                        "destroyed_attack_total",
+                        "destroyed_health_total"
                       ]
                     }
                   },
@@ -46291,6 +46638,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -46601,6 +46951,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -46836,6 +47189,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -47099,6 +47455,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -47448,6 +47807,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -47946,6 +48308,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -48256,6 +48621,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -48714,6 +49082,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -48946,6 +49317,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -49179,6 +49553,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -49422,6 +49799,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -49654,6 +50034,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -49886,6 +50269,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -50140,6 +50526,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -50481,6 +50870,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -51118,6 +51510,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -51379,6 +51774,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -52009,6 +52407,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -52854,6 +53255,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -52919,7 +53323,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -54073,6 +54479,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -54340,6 +54749,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             },
@@ -54606,6 +55018,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -54829,6 +55244,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -55057,6 +55475,9 @@
                                   "minItems": 1,
                                   "maxItems": 8,
                                   "uniqueItems": true
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               }
                             }
@@ -55122,7 +55543,9 @@
                                         "enemy_units_played_this_game",
                                         "hand_shortfall",
                                         "friendly_kredit_slots",
-                                        "enemy_kredit_slots"
+                                        "enemy_kredit_slots",
+                                        "destroyed_attack_total",
+                                        "destroyed_health_total"
                                       ]
                                     }
                                   },
@@ -55729,6 +56152,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -55847,6 +56273,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -55957,6 +56386,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -56150,6 +56582,9 @@
                                     "even",
                                     "odd"
                                   ]
+                                },
+                                "not_chosen": {
+                                  "const": true
                                 }
                               },
                               "required": [
@@ -56826,6 +57261,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -57079,6 +57517,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -57369,6 +57810,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -57659,6 +58103,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -58070,6 +58517,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -58188,6 +58638,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -58596,6 +59049,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           },
@@ -59308,6 +59764,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -59373,7 +59832,9 @@
                                       "enemy_units_played_this_game",
                                       "hand_shortfall",
                                       "friendly_kredit_slots",
-                                      "enemy_kredit_slots"
+                                      "enemy_kredit_slots",
+                                      "destroyed_attack_total",
+                                      "destroyed_health_total"
                                     ]
                                   }
                                 },
@@ -60324,6 +60785,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           },
@@ -60528,6 +60992,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           },
@@ -60731,6 +61198,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -60891,6 +61361,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -61056,6 +61529,9 @@
                                 "minItems": 1,
                                 "maxItems": 8,
                                 "uniqueItems": true
+                              },
+                              "not_chosen": {
+                                "const": true
                               }
                             }
                           }
@@ -61121,7 +61597,9 @@
                                       "enemy_units_played_this_game",
                                       "hand_shortfall",
                                       "friendly_kredit_slots",
-                                      "enemy_kredit_slots"
+                                      "enemy_kredit_slots",
+                                      "destroyed_attack_total",
+                                      "destroyed_health_total"
                                     ]
                                   }
                                 },
@@ -61957,6 +62435,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -62218,6 +62699,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -62448,6 +62932,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             }
@@ -62700,6 +63187,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },
@@ -62942,6 +63432,9 @@
                     "even",
                     "odd"
                   ]
+                },
+                "not_chosen": {
+                  "const": true
                 }
               },
               "required": [
@@ -63181,6 +63674,9 @@
                   "minItems": 1,
                   "maxItems": 8,
                   "uniqueItems": true
+                },
+                "not_chosen": {
+                  "const": true
                 }
               }
             },

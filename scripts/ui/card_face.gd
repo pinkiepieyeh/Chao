@@ -148,7 +148,7 @@ func _refresh_tooltip() -> void:
 	if spec.get("kind", "unit") == "unit":
 		summary += " · 行动 %d · 攻击 %d · 生命 %d" % [_operation_cost(), _attack(), _health()]
 	var rules := _ability_text(CardRuntime.detailed_rules_text(spec))
-	tooltip_text = title + "\n" + SinCatalog.label(SinCatalog.id_of(spec)) + "\n" + str(FactionCatalog.info(spec).get("name", "未指定阵营")) + ("（%s）" % DeckRules.FACTION_CATEGORY_NAMES.get(str(FactionCatalog.info(spec).get("category", "normal")), "") if str(FactionCatalog.info(spec).get("category", "normal")) != "normal" else "") + "\n" + summary + ("\n" + rules if not rules.is_empty() else "") + ("\n作者 · " + author_name if not author_name.is_empty() else "")
+	tooltip_text = title + "\n" + SinCatalog.label(SinCatalog.id_of(spec)) + "\n" + str(FactionCatalog.info(spec).get("name", "未指定阵营")) + ("（%s）" % DeckRules.FACTION_CATEGORY_NAMES.get(DeckRules.card_category(spec, FactionCatalog.entries), "") if DeckRules.card_category(spec, FactionCatalog.entries) in ["large", "small"] else "") + "\n" + summary + ("\n" + rules if not rules.is_empty() else "") + ("\n作者 · " + author_name if not author_name.is_empty() else "")
 
 func _attack() -> int:
 	return current_attack if current_attack >= 0 else int(spec.get("attack", 0))
@@ -349,9 +349,10 @@ func _frame(canvas: Vector2) -> void:
 func _faction_pattern(canvas: Vector2) -> void:
 	if choice_mode or spec.get("kind") == "hq": return
 	var info := FactionCatalog.info(spec)
-	var category := str(info.get("category", "normal"))
-	if info.is_empty() or category == "normal": return
-	var tint := Color(FactionCatalog.color_for(spec).lightened(0.45), 0.55)
+	var category := DeckRules.card_category(spec, FactionCatalog.entries)
+	if category == "normal" or not category in ["large", "small"]: return
+	var base_colour: Color = FactionCatalog.color_for(spec) if not info.is_empty() else SinCatalog.color_for(spec)
+	var tint := Color(base_colour.lightened(0.45), 0.55)
 	var rect := Rect2(Vector2(2, 2), canvas - Vector2(4, 4))
 	var step := 9.0 if compact else 11.0
 	var reach := rect.size.x * (0.22 if compact else 1.0)

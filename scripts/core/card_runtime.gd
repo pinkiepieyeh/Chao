@@ -698,7 +698,7 @@ static func _numeric_text(value: Variant, signed_value := false) -> String:
 		if _is_unit_query(value): return ("+" if signed_value else "等同于") + _unit_value_text(value) + ("" if signed_value else "的")
 		if value.has("equipment_faction"): return "每件指定阵营装备×%d" % value.scale
 		if value.has("equipment"): return "每件【%s】装备×%d" % [value.equipment,value.scale]
-		var names := {"friendly_kredit_slots":"己方资源槽数","enemy_kredit_slots":"敌方资源槽数","friendly_draws_this_game":"本局己方抽牌数","enemy_draws_this_game":"本局敌方抽牌数","friendly_units_played_this_game":"本局己方打出的单位数","enemy_units_played_this_game":"本局敌方打出的单位数","hand_shortfall":"己方手牌比敌方少的张数","enemy_deaths_this_turn":"本回合敌方单位阵亡数","friendly_deaths_this_turn":"本回合友方单位阵亡数","event_damage":"本次受到的伤害","friendly_turn_number":"己方回合序号","enemy_turn_number":"敌方回合序号","source_base_health":"本卡初始防御力", "enemy_unit_count":"敌方在场单位数", "friendly_unit_count":"己方在场单位数", "other_friendly_unit_count":"其他友方在场单位数"}
+		var names := {"destroyed_attack_total":"本组消灭单位的攻击力合计","destroyed_health_total":"本组消灭单位的防御力合计","friendly_kredit_slots":"己方资源槽数","enemy_kredit_slots":"敌方资源槽数","friendly_draws_this_game":"本局己方抽牌数","enemy_draws_this_game":"本局敌方抽牌数","friendly_units_played_this_game":"本局己方打出的单位数","enemy_units_played_this_game":"本局敌方打出的单位数","hand_shortfall":"己方手牌比敌方少的张数","enemy_deaths_this_turn":"本回合敌方单位阵亡数","friendly_deaths_this_turn":"本回合友方单位阵亡数","event_damage":"本次受到的伤害","friendly_turn_number":"己方回合序号","enemy_turn_number":"敌方回合序号","source_base_health":"本卡初始防御力", "enemy_unit_count":"敌方在场单位数", "friendly_unit_count":"己方在场单位数", "other_friendly_unit_count":"其他友方在场单位数"}
 		var text: String = names.get(value.get("stat", ""), "未知数值")
 		return "+" + text + "（结算时计数）" if signed_value else "等同于" + text + "的"
 	return "%+d" % int(value) if signed_value else str(value)
@@ -951,7 +951,7 @@ static func premise_text(p: Dictionary) -> String:
 		var pieces := PackedStringArray()
 		for item in p.items: pieces.append("（" + premise_text(item) + "）")
 		return ("且" if p.test == "all" else "或").join(pieces)
-	var names := {"friendly_kredit_slots":"己方资源槽数","enemy_kredit_slots":"敌方资源槽数","friendly_draws_this_game":"本局己方抽牌数","enemy_draws_this_game":"本局敌方抽牌数","friendly_units_played_this_game":"本局己方打出的单位数","enemy_units_played_this_game":"本局敌方打出的单位数","hand_shortfall":"己方手牌比敌方少的张数","enemy_deaths_this_turn":"本回合敌方单位阵亡数","friendly_deaths_this_turn":"本回合友方单位阵亡数","event_damage":"本次受到的伤害","friendly_turn_number":"己方回合序号","enemy_turn_number":"敌方回合序号","source_destroyed_count":"本卡本次消灭的单位数","enemy_unit_count":"敌方在场单位数","friendly_unit_count":"己方在场单位数","other_friendly_unit_count":"其他友方在场单位数","enemy_front_count":"敌方前线单位数","friendly_front_count":"己方前线单位数","enemy_support_count":"敌方后援线单位数","friendly_support_count":"己方后援线单位数","enemy_hand_count":"敌方手牌数","friendly_hand_count":"己方手牌数","enemy_deck_count":"敌方牌组张数","friendly_deck_count":"己方牌组张数","enemy_hq_health":"敌方总部防御力","friendly_hq_health":"己方总部防御力","enemy_kredits":"敌方剩余资源","friendly_kredits":"己方剩余资源","source_attack":"自身当前攻击力","source_health":"自身当前防御力","source_base_health":"本卡初始防御力"}
+	var names := {"destroyed_attack_total":"本组消灭单位的攻击力合计","destroyed_health_total":"本组消灭单位的防御力合计","friendly_kredit_slots":"己方资源槽数","enemy_kredit_slots":"敌方资源槽数","friendly_draws_this_game":"本局己方抽牌数","enemy_draws_this_game":"本局敌方抽牌数","friendly_units_played_this_game":"本局己方打出的单位数","enemy_units_played_this_game":"本局敌方打出的单位数","hand_shortfall":"己方手牌比敌方少的张数","enemy_deaths_this_turn":"本回合敌方单位阵亡数","friendly_deaths_this_turn":"本回合友方单位阵亡数","event_damage":"本次受到的伤害","friendly_turn_number":"己方回合序号","enemy_turn_number":"敌方回合序号","source_destroyed_count":"本卡本次消灭的单位数","enemy_unit_count":"敌方在场单位数","friendly_unit_count":"己方在场单位数","other_friendly_unit_count":"其他友方在场单位数","enemy_front_count":"敌方前线单位数","friendly_front_count":"己方前线单位数","enemy_support_count":"敌方后援线单位数","friendly_support_count":"己方后援线单位数","enemy_hand_count":"敌方手牌数","friendly_hand_count":"己方手牌数","enemy_deck_count":"敌方牌组张数","friendly_deck_count":"己方牌组张数","enemy_hq_health":"敌方总部防御力","friendly_hq_health":"己方总部防御力","enemy_kredits":"敌方剩余资源","friendly_kredits":"己方剩余资源","source_attack":"自身当前攻击力","source_health":"自身当前防御力","source_base_health":"本卡初始防御力"}
 	var left: String = max_unit_stat_text(p.left) if p.left is Dictionary and p.left.has("max_unit_stat") else _unit_value_text(p.left) if _is_unit_query(p.left) else count_text(p.left.count_units) if p.left is Dictionary and p.left.has("count_units") else names.get(p.left.stat, p.left.stat) if p.left is Dictionary else str(p.left)
 	var right: String = max_unit_stat_text(p.right) if p.right is Dictionary and p.right.has("max_unit_stat") else _unit_value_text(p.right) if _is_unit_query(p.right) else count_text(p.right.count_units) if p.right is Dictionary and p.right.has("count_units") else names.get(p.right.stat, p.right.stat) if p.right is Dictionary else str(p.right)
 	return left + {"gt":"大于","gte":"不少于","eq":"等于","ne":"不等于","lte":"不多于","lt":"小于"}[p.cmp] + right + ("%+d" % int(p.right_offset) if p.has("right_offset") and p.right_offset!=0 else "")
@@ -996,6 +996,9 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 		var prior: Array=a.effects.slice(0,i)
 		if e.op=="select_units" and (e.min>e.max or prior.any(func(x):return x.op=="select_units") or a.trigger=="while_active"): return "每组最多一次多选，数量范围须有效"
 		if e.get("target")=="selected_units" and not prior.any(func(x):return x.op=="select_units"): return "本组须先选择多个单位"
+		for key in ["amount","attack_delta","health_delta","value"]:
+			if e.get(key) is Dictionary and e[key].get("stat") in ["destroyed_attack_total","destroyed_health_total"] and not prior.any(func(x):return x.op=="destroy"): return "被消灭单位的攻防合计需要本组先消灭单位"
+		if e.get("unit_filter") is Dictionary and e.unit_filter.get("not_chosen",false) and not body.is_empty() and not (a.has("target") or a.trigger=="on_play" and body.get("play_target") != null): return "“所选单位除外”需要卡牌或能力选择一个单位"
 		if e.get("amount") is Dictionary and e.amount.get("stat")=="selected_destroyed_count" and not prior.any(func(x):return x.op=="destroy" and x.target=="selected_units"): return "本组须先消灭所选单位"
 		if e.get("source")=="attack_target" and (e.mode!="copy" or not a.trigger in ["after_attack","on_attack"]): return "被攻击单位仅能在攻击时或之后复制"
 		if e.has("copy_state") and (e.source!="attack_target" or e.mode!="copy" or e.has("inherit_from")): return "当前攻防复制仅用于被攻击单位"
@@ -1529,6 +1532,7 @@ static func bold_rules_text(text: String, d: Dictionary) -> String:
 
 static func _filter_detail(f: Dictionary) -> String:
 	var text: String=("老兵" if f.is_veteran else "非老兵") if f.has("is_veteran") else ""
+	if f.get("not_chosen", false): text = "所选单位以外的" + text
 	text += {"front":"前线的","support":"后援线的"}.get(f.get("row"),"")
 	if f.has("is_liberated"): text+=("已解放的" if f.is_liberated else "未解放的")
 	if f.has("generated_by"): text+="缴获的"

@@ -160,6 +160,20 @@ for(const x of [1,3,10,11]){
  ])add('0130/tiers/'+JSON.stringify({kind,effects}),{...base(kind),tokens,abilities:[{trigger:'on_play',effects}]});
  for(const amount of [1,3,-3])add('0130/slots/'+amount,{...base('order'),abilities:[{trigger:'on_play',effects:[{op:'modify_kredit_slots',player:'owner',amount}]}]});
 }
+// 0.14.0: not_chosen and destroyed totals.
+{
+ const buff={op:'modify_stats',target:'chosen',attack_delta:{stat:'destroyed_attack_total'},health_delta:{stat:'destroyed_health_total'},duration:'battle'};
+ for(const kind of ['order','unit'])for(const play_target of [{side:'ally',row:'any'},null])for(const effects of [
+  [{op:'destroy',target:'all_friendly_units',unit_filter:{not_chosen:true}},buff],
+  [{op:'destroy',target:'all_units',unit_filter:{not_chosen:true,row:'front'}},buff],
+  [buff,{op:'destroy',target:'all_enemy_units'}],
+  [{op:'damage',target:'all_enemy_units',amount:1,unit_filter:{not_chosen:true}}],
+  [{op:'destroy',target:'all_friendly_units',unit_filter:{not_chosen:false}}],
+  [{op:'destroy',target:'all_enemy_units'},{op:'draw',player:'owner',amount:{stat:'destroyed_attack_total'}}],
+ ])add('0140/'+JSON.stringify({kind,play_target,effects}),{...base(kind),play_target,abilities:[{trigger:'on_play',effects}]});
+ for(const category of ['large','normal','small','huge',null])add('0140/category/'+category,{...base('unit'),category});
+ add('0140/ability-target',{...base('unit'),abilities:[{trigger:'own_turn_start',target:{side:'ally',row:'any',timing:'trigger'},effects:[{op:'destroy',target:'all_friendly_units',unit_filter:{not_chosen:true}}]}]});
+}
 const dir = await mkdtemp(join(tmpdir(), 'frontline-mechanics-parity-'));
 try {
   const path = join(dir,'corpus.json'); await writeFile(path,JSON.stringify(corpus));

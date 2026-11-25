@@ -15,7 +15,7 @@ export function deckComposition(cards, factions, main, ally, complete=true) {
     if(d.rarity==='elite'&&slot!=='main')return {...result,error:`“${d.name}”是金卡，只能放入主罪孽为该罪孽的牌组。`};
     const faction=d.faction_id?factions?.[d.faction_id]:null;
     if(d.faction_id&&!faction)return {...result,error:`“${d.name}”的阵营不存在，请刷新卡库。`};
-    const category=faction?.category??'normal';
+    const category=d.category??faction?.category??'normal';
     if(!FACTION_CATEGORIES.includes(category))return {...result,error:'阵营类别无效，请刷新卡库。'};
     if(category==='large'&&slot==='ally')return {...result,error:`“${d.name}”属于大阵营，不能计入副罪孽。`};
     if(category==='small'&&slot==='main')return {...result,error:`“${d.name}”属于小阵营，不能计入主罪孽。`};

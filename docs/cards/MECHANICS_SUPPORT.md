@@ -30,6 +30,8 @@
 
 多触发反制、按消灭数量分档强化与刚召唤单位的强化、资源槽超过 12（最多 24）、庇护词条，完整语义见 [0.13.0 新增机制](MECHANICS_0130.md)。
 
+排除所选单位（unit_filter.not_chosen）、被消灭单位的攻防合计，完整语义见 [0.14.0 新增机制](MECHANICS_0140.md)。
+
 ## 指令与反制
 
 指令制作已提供明确类型入口；反制支持对方部署单位、打出指令、攻击总部三类。专用 on_reveal/trigger_unit/cancel_action 与精确结算、隐私、费用规则见 [补充合同](COUNTERS_AND_VERSIONS.md)。

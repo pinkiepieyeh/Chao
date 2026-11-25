@@ -56,6 +56,8 @@ function extendedSemantics(a,body){
   const e=a.effects[i],prior=a.effects.slice(0,i);
   if(e.op==='select_units'&&(e.min>e.max||prior.some(x=>x.op==='select_units')||a.trigger==='while_active'))fail('SEMANTIC_VALIDATION_FAILED','每组最多一次多选，最少数量不得超过最多数量。');
   if(e.target==='selected_units'&&!prior.some(x=>x.op==='select_units'))fail('SEMANTIC_VALIDATION_FAILED','请先在本组选择多个单位。');
+  if(['amount','attack_delta','health_delta','value'].some(k=>['destroyed_attack_total','destroyed_health_total'].includes(e[k]?.stat))&&!prior.some(x=>x.op==='destroy'))fail('SEMANTIC_VALIDATION_FAILED','被消灭单位的攻防合计需要本组先消灭单位。');
+  if(e.unit_filter?.not_chosen&&body&&!(a.target||a.trigger==='on_play'&&body.play_target!=null))fail('SEMANTIC_VALIDATION_FAILED','“所选单位除外”需要卡牌或能力选择一个单位。');
   if(e.amount?.stat==='selected_destroyed_count'&&!prior.some(x=>x.op==='destroy'&&x.target==='selected_units'))fail('SEMANTIC_VALIDATION_FAILED','数量需要本组先消灭所选单位。');
   if(e.source==='attack_target'&&(e.mode!=='copy'||!['after_attack','on_attack'].includes(a.trigger)))fail('SEMANTIC_VALIDATION_FAILED','被攻击单位仅能在主动攻击时或之后复制。');
   if(e.copy_state!==undefined&&(e.source!=='attack_target'||e.mode!=='copy'||e.inherit_from))fail('SEMANTIC_VALIDATION_FAILED','当前攻防复制仅用于被攻击单位，不混用强化来源筛选。');
@@ -373,7 +375,7 @@ export const registryHash = registry => hash(registryEntries(registry).map(bindi
 export function validateCardBlueprint(input, registry) {
   const blueprint = normalize(input);
   const required = ['kind', 'unit_class', 'cost', 'operation_cost', 'attack', 'health', 'keywords'];
-  if (!blueprint || typeof blueprint !== 'object' || Array.isArray(blueprint) || required.some(key => !Object.hasOwn(blueprint, key)) || Object.keys(blueprint).some(key => ![...required, 'name', 'display_text', 'rarity', 'sin', 'faction_id', 'counter_trigger', 'abilities', 'tokens', 'play_target', 'appearance', 'media', 'effect_mode', 'deck_building', 'cost_reduction', 'cost_override', 'cost_surcharge', 'draw_rule','damage_bonuses','veteran'].includes(key))) fail('INVALID_REQUEST', '基础卡牌配置缺少字段或包含未知字段。', 400);
+  if (!blueprint || typeof blueprint !== 'object' || Array.isArray(blueprint) || required.some(key => !Object.hasOwn(blueprint, key)) || Object.keys(blueprint).some(key => ![...required, 'name', 'display_text', 'rarity', 'sin', 'faction_id', 'counter_trigger', 'abilities', 'tokens', 'play_target', 'appearance', 'media', 'effect_mode', 'deck_building', 'cost_reduction', 'cost_override', 'cost_surcharge', 'draw_rule','damage_bonuses','veteran','category'].includes(key))) fail('INVALID_REQUEST', '基础卡牌配置缺少字段或包含未知字段。', 400);
   if (Object.hasOwn(blueprint, 'effect_mode') && (!['append','replace'].includes(blueprint.effect_mode) || !Array.isArray(blueprint.abilities))) fail('INVALID_REQUEST', '追加模式需要固定能力数组。', 400);
   if (Object.hasOwn(blueprint,'appearance') && (!blueprint.appearance || typeof blueprint.appearance !== 'object' || Array.isArray(blueprint.appearance))) fail('INVALID_SCHEMA','卡牌外观必须是对象。');
   if (Object.hasOwn(blueprint, 'name')) {
@@ -469,6 +471,7 @@ export function applyCardBlueprint(candidate, blueprint, {mergeEffects = true} =
   if (Object.hasOwn(blueprint,'faction_id')) card.faction_id=blueprint.faction_id;
   else delete card.faction_id;
   if (Object.hasOwn(blueprint,'deck_building')) card.deck_building=blueprint.deck_building; else delete card.deck_building;
+  if (Object.hasOwn(blueprint,'category')) card.category=blueprint.category; else delete card.category;
   if(blueprint.cost_reduction){
     if(card.cost_reduction && canonical(card.cost_reduction)!==canonical(blueprint.cost_reduction))fail('BLUEPRINT_ABILITY_CONFLICT','不能修改已有的动态减费规则。');
     card.cost_reduction=structuredClone(blueprint.cost_reduction);
@@ -595,7 +598,7 @@ function drawFilterText(f={}){
 }
 function attackChangeText(f={},counter=false){return `${({own:counter?'己方':'友方',enemy:'敌方'})[f.side]??''}${({front:'前线',support:'后援线'})[f.row]??''}单位攻击力${({up:'上升',down:'下降'})[f.direction]??'变化'}时`;}
 const valueName=v=>v?.stat?statNames[v.stat]??'数值':v?.count_units?unitCountText(v.count_units):'数值';
-const statNames = {friendly_kredit_slots:'己方资源槽数',enemy_kredit_slots:'敌方资源槽数',friendly_draws_this_game:"本局己方抽牌数",enemy_draws_this_game:"本局敌方抽牌数",friendly_units_played_this_game:"本局己方打出的单位数",enemy_units_played_this_game:"本局敌方打出的单位数",hand_shortfall:"己方手牌比敌方少的张数",event_damage:"本次受到的伤害",friendly_turn_number:"己方回合序号",enemy_turn_number:"敌方回合序号",source_base_health:'本卡初始防御力',enemy_unit_count:'敌方在场单位数',friendly_unit_count:'己方在场单位数',other_friendly_unit_count:'其他友方在场单位数'};
+const statNames = {destroyed_attack_total:'本组消灭单位的攻击力合计',destroyed_health_total:'本组消灭单位的防御力合计',friendly_kredit_slots:'己方资源槽数',enemy_kredit_slots:'敌方资源槽数',friendly_draws_this_game:"本局己方抽牌数",enemy_draws_this_game:"本局敌方抽牌数",friendly_units_played_this_game:"本局己方打出的单位数",enemy_units_played_this_game:"本局敌方打出的单位数",hand_shortfall:"己方手牌比敌方少的张数",event_damage:"本次受到的伤害",friendly_turn_number:"己方回合序号",enemy_turn_number:"敌方回合序号",source_base_health:'本卡初始防御力',enemy_unit_count:'敌方在场单位数',friendly_unit_count:'己方在场单位数',other_friendly_unit_count:'其他友方在场单位数'};
 const amountText = n => n?.max_unit_stat?`等同于${maxUnitStatText(n)}的`: n?.count_units?`等同于${unitCountText(n.count_units)}的`: unitValue(n)?`等同于${unitValueText(n)}的`:n?.stat ? `等同于${statNames[n.stat]}的` : n;
 const delta = n => n?.max_unit_stat?`+${maxUnitStatText(n)}`: n?.count_units?`+${unitCountText(n.count_units)}（结算时计数）`: unitValue(n)?`+${unitValueText(n)}`:n?.equipment_faction?`每件指定阵营装备×${n.scale}`:n?.equipment ? `每件【${n.equipment}】装备×${n.scale}` : n?.stat ? `+${statNames[n.stat]}（结算时计数）` : n >= 0 ? `+${n}` : String(n);
 const selectorText = s => `${s.side==='any'?'任意一方':s.side==='enemy'?'敌方':'友方'}${({any:'',front:'前线',support:'后援线'})[s.row]}${s.faction_id?'指定阵营的':''}${unitClassText(s.unit_classes)}${s.include_hq?'或总部':''}`;
