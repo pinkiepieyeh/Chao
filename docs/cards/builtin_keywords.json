@@ -226,5 +226,53 @@
       "kind": "builtin",
       "builtin_id": "core.revive.v1"
     }
+  },
+  {
+    "schema_version": "1.0.0",
+    "ruleset_version": "frontline-1",
+    "id": "core.salvage",
+    "version": 2,
+    "name": "缴获",
+    "aliases": [
+      "salvage"
+    ],
+    "description": "在己方回合消灭敌方单位时，将其 1/1 副本加入手牌；副本部署费用最高为 1，且没有罪孽，原卡的词条与能力保留。",
+    "parameters": {},
+    "implementation": {
+      "kind": "builtin",
+      "builtin_id": "core.salvage.v2"
+    }
+  },
+  {
+    "schema_version": "1.0.0",
+    "ruleset_version": "frontline-1",
+    "id": "core.unpinnable",
+    "version": 1,
+    "name": "无法被压制",
+    "aliases": [
+      "unpinnable"
+    ],
+    "description": "不会受到压制效果。已被压制的单位获得本词条后立即解除压制。",
+    "parameters": {},
+    "implementation": {
+      "kind": "builtin",
+      "builtin_id": "core.unpinnable.v1"
+    }
+  },
+  {
+    "schema_version": "1.0.0",
+    "ruleset_version": "frontline-1",
+    "id": "core.poisonous",
+    "version": 1,
+    "name": "剧毒",
+    "aliases": [
+      "poisonous"
+    ],
+    "description": "本单位对单位造成伤害后（普通攻击、反击和能力伤害），消灭受到伤害的单位；伤害减为 0 或对总部造成伤害时不触发。",
+    "parameters": {},
+    "implementation": {
+      "kind": "builtin",
+      "builtin_id": "core.poisonous.v1"
+    }
   }
 ]

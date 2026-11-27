@@ -132,7 +132,7 @@ export function apply(ctx) {
     parameters: {
       card: cardParameter,
       replaces: replacesParameter,
-      scenario: {type: 'object', additionalProperties: true, description: '可选：my_units、enemy_units（数组，元素含 name、unit_class、attack、health、row）；credits；actions（play、move、attack、activate、end_turn、enemy_ai、kill 的序列）；target_index、attack_target_index、activate_index；choices（依次回答选择的序号）'},
+      scenario: {type: 'object', additionalProperties: true, description: '可选：my_units、enemy_units（数组，元素含 name、unit_class、attack、health、row，可加 keywords、abilities，或用 card 给出完整卡牌）；hand、enemy_hand（额外手牌，卡牌数组，用动作 play_hand:N、enemy_play:N 打出）；enemy_deck（放进对手牌组的卡牌数组）；seed（随机种子）；credits；actions（play、move、attack、activate、end_turn、enemy_ai、kill、play_hand:N、enemy_play:N 的序列）；target_index、attack_target_index、activate_index；choices（依次回答选择的序号）。快照含行动费、词条、层数、压制和抑制状态。'},
       game_path: {type: 'string', description: 'Frontline-*.exe 的完整路径，玩家提供一次后会记住'},
     },
     output: text,

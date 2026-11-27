@@ -115,7 +115,10 @@
                 "core.untargetable.v1",
                 "core.order_untargetable.v1",
                 "core.ignore_fighter_cover.v1",
-                "core.revive.v1"
+                "core.revive.v1",
+                "core.salvage.v2",
+                "core.unpinnable.v1",
+                "core.poisonous.v1"
               ]
             }
           },
@@ -853,6 +856,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -1898,6 +1907,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -3183,6 +3198,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -3496,6 +3517,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -3734,8 +3761,17 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
+                            },
+                            "salvage": {
+                              "const": true
                             }
                           },
                           "required": [
@@ -4000,6 +4036,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -4352,6 +4394,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -4853,6 +4901,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -5166,6 +5220,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -5627,6 +5687,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -5862,6 +5928,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -6098,6 +6170,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -6344,6 +6422,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -6579,6 +6663,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -6814,6 +6904,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -7071,6 +7167,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -7415,6 +7517,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -7791,6 +7899,19 @@
                                   ]
                                 }
                               }
+                            },
+                            "from": {
+                              "const": "opponent"
+                            },
+                            "reveal": {
+                              "type": "integer",
+                              "minimum": 2,
+                              "maximum": 5
+                            },
+                            "hand_cost_delta": {
+                              "type": "integer",
+                              "minimum": -5,
+                              "maximum": 5
                             }
                           },
                           "required": [
@@ -8055,6 +8176,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -8319,6 +8446,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -8351,8 +8484,7 @@
                           },
                           "required": [
                             "op",
-                            "player",
-                            "card_name"
+                            "player"
                           ]
                         },
                         {
@@ -8952,6 +9084,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             },
@@ -9800,6 +9938,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             }
@@ -11024,6 +11168,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             },
@@ -11294,6 +11444,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             },
@@ -11563,6 +11719,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             }
@@ -11789,6 +11951,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             }
@@ -12020,6 +12188,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               }
                                             }
@@ -12697,6 +12871,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               },
                                               "required": [
@@ -12818,6 +12998,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               },
                                               "required": [
@@ -12931,6 +13117,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               },
                                               "required": [
@@ -13127,6 +13319,12 @@
                                                 },
                                                 "not_chosen": {
                                                   "const": true
+                                                },
+                                                "attack_rank": {
+                                                  "enum": [
+                                                    "lowest",
+                                                    "highest"
+                                                  ]
                                                 }
                                               },
                                               "required": [
@@ -13185,6 +13383,25 @@
                                               "enum": [
                                                 "opponent",
                                                 "owner"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "op",
+                                            "player"
+                                          ]
+                                        },
+                                        {
+                                          "type": "object",
+                                          "additionalProperties": false,
+                                          "properties": {
+                                            "op": {
+                                              "const": "salvage_copy"
+                                            },
+                                            "player": {
+                                              "enum": [
+                                                "owner",
+                                                "opponent"
                                               ]
                                             }
                                           },
@@ -13806,6 +14023,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -14062,6 +14285,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -14355,6 +14584,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -14648,6 +14883,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -15425,6 +15666,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -15546,6 +15793,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -15957,6 +16210,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           },
@@ -16672,6 +16931,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           }
@@ -17693,6 +17958,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           },
@@ -17900,6 +18171,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           },
@@ -18106,6 +18383,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           }
@@ -18269,6 +18552,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           }
@@ -18437,6 +18726,12 @@
                                               },
                                               "not_chosen": {
                                                 "const": true
+                                              },
+                                              "attack_rank": {
+                                                "enum": [
+                                                  "lowest",
+                                                  "highest"
+                                                ]
                                               }
                                             }
                                           }
@@ -19019,6 +19314,25 @@
                                           "op",
                                           "player"
                                         ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "properties": {
+                                          "op": {
+                                            "const": "salvage_copy"
+                                          },
+                                          "player": {
+                                            "enum": [
+                                              "owner",
+                                              "opponent"
+                                            ]
+                                          }
+                                        },
+                                        "required": [
+                                          "op",
+                                          "player"
+                                        ]
                                       }
                                     ]
                                   }
@@ -19343,6 +19657,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -19607,6 +19927,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -19840,6 +20166,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -20095,6 +20427,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -20439,8 +20777,17 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
+                            },
+                            "random": {
+                              "const": true
                             }
                           },
                           "required": [
@@ -20550,6 +20897,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -20792,6 +21145,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -21112,6 +21471,25 @@
                           "required": [
                             "op",
                             "tiers"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "salvage_copy"
+                            },
+                            "player": {
+                              "enum": [
+                                "owner",
+                                "opponent"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "player"
                           ]
                         }
                       ]
@@ -23879,6 +24257,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -24924,6 +25308,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -26209,6 +26599,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -26522,6 +26918,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -26760,8 +27162,17 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
+            },
+            "salvage": {
+              "const": true
             }
           },
           "required": [
@@ -27026,6 +27437,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -27378,6 +27795,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -27879,6 +28302,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -28192,6 +28621,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -28653,6 +29088,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -28888,6 +29329,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -29124,6 +29571,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -29370,6 +29823,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -29605,6 +30064,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -29840,6 +30305,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -30097,6 +30568,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -30441,6 +30918,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -30817,6 +31300,19 @@
                   ]
                 }
               }
+            },
+            "from": {
+              "const": "opponent"
+            },
+            "reveal": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5
+            },
+            "hand_cost_delta": {
+              "type": "integer",
+              "minimum": -5,
+              "maximum": 5
             }
           },
           "required": [
@@ -31081,6 +31577,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -31345,6 +31847,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -31377,8 +31885,7 @@
           },
           "required": [
             "op",
-            "player",
-            "card_name"
+            "player"
           ]
         },
         {
@@ -31978,6 +32485,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -32826,6 +33339,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -34050,6 +34569,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -34320,6 +34845,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -34589,6 +35120,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -34815,6 +35352,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -35046,6 +35589,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -35723,6 +36272,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -35844,6 +36399,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -35957,6 +36518,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -36153,6 +36720,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -36211,6 +36784,25 @@
                               "enum": [
                                 "opponent",
                                 "owner"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "player"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "salvage_copy"
+                            },
+                            "player": {
+                              "enum": [
+                                "owner",
+                                "opponent"
                               ]
                             }
                           },
@@ -36832,6 +37424,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -37088,6 +37686,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -37381,6 +37985,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -37674,6 +38284,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -38175,6 +38791,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -38296,6 +38918,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -38707,6 +39335,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -39422,6 +40056,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -40443,6 +41083,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -40650,6 +41296,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -40856,6 +41508,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -41019,6 +41677,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -41187,6 +41851,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -41769,6 +42439,25 @@
                           "op",
                           "player"
                         ]
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "op": {
+                            "const": "salvage_copy"
+                          },
+                          "player": {
+                            "enum": [
+                              "owner",
+                              "opponent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "player"
+                        ]
                       }
                     ]
                   }
@@ -42093,6 +42782,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -42357,6 +43052,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -42590,6 +43291,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -42845,6 +43552,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -43090,6 +43803,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -43332,6 +44051,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -43652,6 +44377,25 @@
           "required": [
             "op",
             "tiers"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "salvage_copy"
+            },
+            "player": {
+              "enum": [
+                "owner",
+                "opponent"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "player"
           ]
         }
       ]
@@ -44311,6 +45055,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -45356,6 +46106,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -46641,6 +47397,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -46954,6 +47716,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -47192,8 +47960,17 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
+            },
+            "salvage": {
+              "const": true
             }
           },
           "required": [
@@ -47458,6 +48235,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -47810,6 +48593,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -48311,6 +49100,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -48624,6 +49419,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -49085,6 +49886,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -49320,6 +50127,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -49556,6 +50369,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -49802,6 +50621,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -50037,6 +50862,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -50272,6 +51103,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -50529,6 +51366,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -50873,6 +51716,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -51249,6 +52098,19 @@
                   ]
                 }
               }
+            },
+            "from": {
+              "const": "opponent"
+            },
+            "reveal": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5
+            },
+            "hand_cost_delta": {
+              "type": "integer",
+              "minimum": -5,
+              "maximum": 5
             }
           },
           "required": [
@@ -51513,6 +52375,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -51777,6 +52645,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -51809,8 +52683,7 @@
           },
           "required": [
             "op",
-            "player",
-            "card_name"
+            "player"
           ]
         },
         {
@@ -52410,6 +53283,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -53258,6 +54137,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -54482,6 +55367,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -54752,6 +55643,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -55021,6 +55918,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -55247,6 +56150,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -55478,6 +56387,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -56155,6 +57070,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -56276,6 +57197,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -56389,6 +57316,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -56585,6 +57518,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -56643,6 +57582,25 @@
                               "enum": [
                                 "opponent",
                                 "owner"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "player"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "salvage_copy"
+                            },
+                            "player": {
+                              "enum": [
+                                "owner",
+                                "opponent"
                               ]
                             }
                           },
@@ -57264,6 +58222,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -57520,6 +58484,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -57813,6 +58783,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -58106,6 +59082,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -58520,6 +59502,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -58641,6 +59629,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -59052,6 +60046,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -59767,6 +60767,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -60788,6 +61794,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -60995,6 +62007,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -61201,6 +62219,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -61364,6 +62388,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -61532,6 +62562,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -62114,6 +63150,25 @@
                           "op",
                           "player"
                         ]
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "op": {
+                            "const": "salvage_copy"
+                          },
+                          "player": {
+                            "enum": [
+                              "owner",
+                              "opponent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "player"
+                        ]
                       }
                     ]
                   }
@@ -62438,6 +63493,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -62702,6 +63763,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -62935,6 +64002,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -63190,6 +64263,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -63435,6 +64514,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -63677,6 +64762,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -63956,6 +65047,25 @@
           "required": [
             "op",
             "cost_delta"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "salvage_copy"
+            },
+            "player": {
+              "enum": [
+                "owner",
+                "opponent"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "player"
           ]
         }
       ]

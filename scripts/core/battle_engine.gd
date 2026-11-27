@@ -24,6 +24,9 @@ var _attack_counter_queue: Array = []
 var _attack_change: Dictionary = {}
 ## While _play pays for a card that is already recorded as played this turn (first_each_turn ignores that record).
 var _paying_played := false
+## Above 0 while an aura's premise is read: keywords then come from the unit itself and effects, not from auras,
+## so two auras can never depend on each other (#158).
+var _aura_depth := 0
 var _choice_answers: Array = []
 var _choice_cursor := 0
 var _resolution_id := ""
@@ -209,8 +212,9 @@ func _has_keyword(unit: Dictionary, keyword_id: String) -> bool:
 	if not unit.get("suppressed",false) and consumed < 0:
 		for keyword in _unit_definition(unit).keywords:
 			if keyword.id == keyword_id: return true
-	for effect in _field_effects(unit,true):
-		if effect.op=="grant_keyword" and effect.keyword_id==keyword_id: return true
+	if _aura_depth == 0:
+		for effect in _field_effects(unit,true):
+			if effect.op=="grant_keyword" and effect.keyword_id==keyword_id: return true
 	for layer in unit.get("grants",[]):
 		if layer.keyword_id == keyword_id and int(layer.modifier_id) > consumed:
 			return true
@@ -277,7 +281,7 @@ func _ready(unit: Dictionary) -> bool:
 	return not _pinned(unit) and (unit.born_turn != state.turn or _has_keyword(unit, "core.blitz"))
 
 func _pinned(unit: Dictionary) -> bool:
-	return int(unit.get("pinned_until",-1)) >= int(state.turn)
+	return int(unit.get("pinned_until",-1)) >= int(state.turn) and not _has_keyword(unit, "core.unpinnable")
 
 func play_cost(player: int, card: Dictionary) -> int:
 	var cost := int(card.definition.cost)
@@ -874,7 +878,25 @@ func _recompute(unit: Dictionary) -> void:
 
 func _context(owner: int, uid: int, card: Dictionary, chosen: int = -1) -> Dictionary:
 	var unit := _unit(uid)
-	return {"owner": owner, "uid": uid, "card": card.duplicate(true), "chosen": chosen, "chosen_snapshot":_unit(chosen).duplicate(true), "previous_cards":state.players.map(func(p):return str(p.get("last_played_kind",""))), "previous_card_details":state.players.map(func(p):return p.get("last_played_card",{}).duplicate(true)), "bound_targets":unit.get("bound_targets",{}).duplicate(true), "ability_layers":unit.get("ability_layers",[]).duplicate(true), "suppressed":bool(unit.get("suppressed",false)), "muted_triggers":unit.get("muted_triggers",[]).duplicate(true), "salvage":_has_keyword(unit,"core.salvage"),"source_row":unit.get("row","support"),"source_position":line_order(owner,unit.get("row","support")).find(uid)}
+	return {"owner": owner, "uid": uid, "card": card.duplicate(true), "chosen": chosen, "chosen_snapshot":_unit(chosen).duplicate(true), "previous_cards":state.players.map(func(p):return str(p.get("last_played_kind",""))), "previous_card_details":state.players.map(func(p):return p.get("last_played_card",{}).duplicate(true)), "bound_targets":unit.get("bound_targets",{}).duplicate(true), "ability_layers":unit.get("ability_layers",[]).duplicate(true), "suppressed":bool(unit.get("suppressed",false)), "muted_triggers":unit.get("muted_triggers",[]).duplicate(true), "salvage":keyword_version(unit,"core.salvage"),"source_row":unit.get("row","support"),"source_position":line_order(owner,unit.get("row","support")).find(uid)}
+
+## A salvage copy: 1/1 with its keywords and abilities. Version 1 of 缴获 caps its cost at 3; version 2 (and salvage by
+## effects) at 1 and drops its sin (#167).
+func salvage_card(card: Dictionary, version: int) -> Dictionary:
+	var cost := int(card.definition.cost)
+	if version >= 2: return _variant_card(card,{"attack":1,"health":1,"cost":mini(1,cost),"sin":null},"salvage")
+	return _variant_card(card,{"attack":1,"health":1,"cost":mini(3,cost)},"salvage")
+
+## The highest version of a keyword a unit has (printed, granted or from an aura); 0 when it has none.
+func keyword_version(unit: Dictionary, keyword_id: String) -> int:
+	if not _has_keyword(unit, keyword_id): return 0
+	var version := 1
+	if not unit.get("suppressed", false):
+		for keyword in _unit_definition(unit).keywords:
+			if keyword.id == keyword_id: version = maxi(version, int(keyword.get("version", 1)))
+	for layer in unit.get("grants", []):
+		if layer.keyword_id == keyword_id: version = maxi(version, int(layer.get("keyword_version", 1)))
+	return version
 
 func _variant_card(card: Dictionary, changes: Dictionary, reason: String) -> Dictionary:
 	var result := card.duplicate(true)
@@ -893,7 +915,7 @@ func _source_key(context: Dictionary) -> String:
 func _destroyer(unit: Dictionary, context: Dictionary) -> void:
 	# Capture the killer before simultaneous deaths remove it from the board.
 	if not unit.has("destroyer"):
-		unit["destroyer"] = {"owner":int(context.owner),"salvage":bool(context.get("salvage",false)),"uid":int(context.uid),"source_key":_source_key(context),"unit_classes":_unit_classes(_unit(int(context.uid))) if not _unit(int(context.uid)).is_empty() else []}
+		unit["destroyer"] = {"owner":int(context.owner),"salvage":int(context.get("salvage",0)),"salvage_any":bool(context.get("salvage_any",false)),"uid":int(context.uid),"source_key":_source_key(context),"unit_classes":_unit_classes(_unit(int(context.uid))) if not _unit(int(context.uid)).is_empty() else []}
 
 func _unit_damage(unit: Dictionary, amount: int, context: Dictionary) -> void:
 	if context.get("damage_kind","effect") != "combat": amount = _incoming_damage(unit,amount,"effect",_unit(int(context.get("uid",-1))),dict_merge(context.card,{"damage_owner":context.owner}))
@@ -908,6 +930,14 @@ func _unit_damage(unit: Dictionary, amount: int, context: Dictionary) -> void:
 		var actual := mini(amount,maxi(0,int(unit.hp)))
 		unit.damage_taken += amount
 		_queue_unit_event(unit,"on_damaged",int(context.uid),context.card,actual)
+		# 剧毒 (#172): damage from a poisonous unit destroys the unit it hit; 庇护 still spends a layer instead.
+		var source := _unit(int(context.get("uid",-1)))
+		if not source.is_empty() and _has_keyword(source,"core.poisonous") and not unit.get("destroyed",false) and int(unit.uid) != int(source.uid):
+			if stack_count(unit, SHELTER) > 0 and not unit.get("suppressed", false):
+				_custom_stack(unit, {"op":"modify_stacks","target":"self","stack":SHELTER,"amount":-1,"duration":"battle"}, context)
+			else:
+				unit["destroyed"] = true
+				_destroyer(unit,context)
 	_recompute(unit)
 
 ## The integer parameter of a keyword printed on the card; grants carry no parameters. Template keywords are
@@ -1009,6 +1039,7 @@ func _generated_card(parent: Dictionary, token_id: String, creator_uid: int = -1
 			result["ruleset_version"] = library.ruleset_version
 			result["appearance"] = {"emblem": result.unit_class if kind == "unit" else kind}
 			if library.has("faction_id"): result["faction_id"] = library.faction_id
+			if (result.get("sin") == null or str(result.get("sin")) == "") and library.get("sin") != null and str(library.get("sin")) != "": result["sin"] = library.sin
 			for key in ["sin","rarity"]:
 				if library.get("veteran",{}).get("token_id")==token_id and not result.has(key) and library.has(key): result[key]=library[key]
 	if expanded.is_empty():
@@ -1246,9 +1277,9 @@ func _checkpoint() -> void:
 		if unit.token_id.is_empty() or unit.card.has("generated_origin"):
 			_deaths.append_array(_abilities(death_context, "on_death"))
 		var killer: Dictionary = unit.get("destroyer",{})
-		if killer.get("salvage",false) and killer.owner == state.active_player and killer.owner != unit.owner:
-			var copy := _variant_card(unit.card,{"attack":1,"health":1,"cost":mini(3,int(unit.card.definition.cost))},"salvage")
-			_receive_card(killer.owner,copy,"salvage",true)
+		# The keyword salvages enemy units killed on its owner's turn; an effect's destroy with salvage takes every unit it destroyed.
+		if killer.get("salvage_any",false) or int(killer.get("salvage",0)) > 0 and killer.owner == state.active_player and killer.owner != unit.owner:
+			_receive_card(killer.owner,salvage_card(unit.card,maxi(2,int(killer.get("salvage",0))) if killer.get("salvage_any",false) else int(killer.salvage)),"salvage",true)
 	if not dead.is_empty():
 		_spend("cleanup")
 		if _fault.is_empty(): _checkpoint()
@@ -1696,6 +1727,7 @@ func _targets(target: String, context: Dictionary, filter: Dictionary = {}) -> A
 	var targets := _target_candidates(target,context)
 	if filter.get("not_chosen", false): targets = targets.filter(func(uid): return int(uid) != int(context.get("chosen", -1)))
 	if not filter.is_empty(): targets = targets.filter(func(uid): return _matches_unit_filter(_unit(uid),filter))
+	if filter.has("attack_rank"): targets = _attack_rank(targets, str(filter.attack_rank))
 	if target.begins_with("random_") and not targets.is_empty():
 		var selected: int = targets[_random_index(targets.size())]
 		targets = [selected]
@@ -2068,12 +2100,16 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 			if not _fault.is_empty(): return
 			_receive_card(owner if effect.player == "owner" else 1 - owner, card, "create")
 		return
+	if effect.op == "salvage_copy":
+		var receiver: int = owner if effect.player == "owner" else 1-owner
+		_receive_card(receiver, salvage_card(_departure_card(context.card), 2), "salvage", true)
+		return
 	if effect.op == "remove_hand":
 		var affected: int = owner if effect.player == "owner" else 1-owner
 		var player: Dictionary = state.players[affected]
 		for entry in player.hand.duplicate():
 			_spend("visits")
-			if entry.card.definition.name == effect.card_name:
+			if not effect.has("card_name") or entry.card.definition.name == effect.card_name:
 				player.hand.erase(entry)
 				_stat("remove_hand",affected,entry.card)
 		return
@@ -2141,6 +2177,10 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 					_stat("heal", owner, context.card, mini(int(effect.amount), maxi(0,int(unit.max_hp)-int(unit.hp))), {"target_owner": unit.owner,"target_uid":uid})
 					unit.damage_taken = maxi(int(unit.get("damage_baseline",0))-int(unit.get("capacity_only",0)), int(unit.damage_taken) - int(effect.amount))
 				"destroy":
+					var destroyer_context: Dictionary = context
+					if effect.get("salvage", false):
+						destroyer_context = context.duplicate(false)
+						destroyer_context["salvage_any"] = true
 					if stack_count(unit, SHELTER) > 0 and not unit.get("suppressed", false):
 						_custom_stack(unit, {"op":"modify_stacks","target":"self","stack":SHELTER,"amount":-1,"duration":"battle"}, context)
 						_stat("shelter", unit.owner, unit.card, 1, {"target_uid": uid})
@@ -2152,7 +2192,7 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 					if effect.target=="selected_units" and unit.hp>0 and not unit.get("destroyed",false): context["selected_destroyed_count"]=int(context.get("selected_destroyed_count",0))+1
 					_stat("destroy", owner, context.card, 1, {"target_owner": unit.owner,"target_uid":uid})
 					unit["destroyed"] = true
-					_destroyer(unit,context)
+					_destroyer(unit,destroyer_context)
 				"equip", "unequip":
 					if not unit.has("equipment"): unit["equipment"]={}
 					if not unit.equipment.has(effect.tag) and unit.equipment.size() >= 16:
@@ -2171,7 +2211,9 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 									break
 				"suppress": _suppress(unit)
 				"repair": unit.damage_taken = int(unit.get("damage_baseline",0))-int(unit.get("capacity_only",0))
-				"pin": unit["pinned_until"] = maxi(int(unit.get("pinned_until",-1)),int(state.turn)+(2 if unit.owner == state.active_player else 1)+2*(int(effect.turns)-1))
+				"pin":
+					if _has_keyword(unit, "core.unpinnable"): continue
+					unit["pinned_until"] = maxi(int(unit.get("pinned_until",-1)),int(state.turn)+(2 if unit.owner == state.active_player else 1)+2*(int(effect.turns)-1))
 				"reset_operations":
 					unit.moved = false
 					unit.attack_locked = false
@@ -2230,7 +2272,9 @@ func _effect(effect: Dictionary, context: Dictionary) -> void:
 						unit.modifiers.append(layer)
 					elif effect.op == "grant_keyword":
 						layer["keyword_id"] = effect.keyword_id
+						layer["keyword_version"] = int(effect.get("keyword_version", 1))
 						unit.grants.append(layer)
+						if effect.keyword_id == "core.unpinnable": unit.erase("pinned_until")
 					elif effect.op == "set_attack_limit":
 						layer["attacks"] = int(effect.attacks)
 						unit.attack_limits.append(layer)
@@ -2501,7 +2545,11 @@ func _field_effects(unit: Dictionary, keywords_only: bool = false) -> Array:
 		for ability in source.card.definition.abilities:
 			if ability.trigger!="while_active" or keywords_only and not ability.effects.any(func(e):return e.op=="grant_keyword"): continue
 			var context := {"owner":source.owner,"uid":source.uid,"card":source.card,"chosen":-1}
-			if ability.has("premise") and not _premise_met(ability.premise,context,false): continue
+			if ability.has("premise"):
+				_aura_depth += 1
+				var met := _premise_met(ability.premise,context,false)
+				_aura_depth -= 1
+				if not met: continue
 			for effect in ability.effects:
 				if not effect.has("target"): continue
 				var matches := false
@@ -2947,17 +2995,29 @@ func _transfer_card(effect: Dictionary, context: Dictionary) -> void:
 		context=context.duplicate(true)
 		context.owner=1-int(context.owner)
 	var owner: int=context.owner
+	var from_owner: int = 1-owner if effect.get("from")=="opponent" else owner
+	var source_context: Dictionary = context
+	if from_owner != owner:
+		source_context = context.duplicate(false)
+		source_context["owner"] = from_owner
 	var summoning: bool=effect.destination in ["support","source_position"]
 	# Choose the first region with matching cards; never mix candidate regions.
 	var sources: Array=[effect.source]
 	sources.append_array(effect.get("fallback_sources",[]))
 	var pool: Array=[]
 	for source in sources:
-		pool=_transfer_pool(str(source),effect,context)
+		pool=_transfer_pool(str(source),effect,source_context)
 		_spend("visits",pool.size())
 		if not _fault.is_empty(): return
 		pool=pool.filter(func(c):return _transfer_matches(c,effect.get("filter",{}),context,summoning))
 		if not pool.is_empty(): break
+	if effect.has("reveal") and pool.size() > int(effect.reveal):
+		var shown: Array = []
+		while shown.size() < int(effect.reveal):
+			var index: int = _random_index(pool.size())
+			if not _fault.is_empty(): return
+			shown.append(pool[index]); pool.remove_at(index)
+		pool = shown
 	if effect.selection=="highest_cost" and not pool.is_empty():
 		var cost:=0
 		for card in pool: cost=maxi(cost,int(card.definition.cost))
@@ -2989,17 +3049,19 @@ func _transfer_card(effect: Dictionary, context: Dictionary) -> void:
 				for key in ["once_marks","pending_layers","pending_abilities"]: card.erase(key)
 			var original: Dictionary=pool[index]
 			pool.remove_at(index)
-			if effect.source=="deck": state.players[owner].deck.erase(original)
+			if effect.source=="deck": state.players[from_owner].deck.erase(original)
 			elif effect.source in ["hand","drawn"]:
-				for entry in state.players[owner].hand:
+				for entry in state.players[from_owner].hand:
 					if entry.card==original and (effect.source!="drawn" or context.get("drawn_cards",[]).any(func(c):return c.get("instance_id","")==entry.instance_id)):
-						state.players[owner].hand.erase(entry); break
+						state.players[from_owner].hand.erase(entry); break
 			elif effect.source=="self":
 				for entry in state.discard:
 					if int(entry.owner)==owner and int(entry.get("source_uid",-1))==int(context.uid): state.discard.erase(entry); break
 			elif effect.source=="discard":
 				for entry in state.discard:
-					if int(entry.owner)==owner and entry.card==original: state.discard.erase(entry); break
+					if int(entry.owner)==from_owner and entry.card==original: state.discard.erase(entry); break
+		if destination=="hand" and effect.has("hand_cost_delta"):
+			card["hand_cost_layers"]=[{"cost_delta":int(effect.hand_cost_delta),"source_card_id":_enhancement_source(context),"source_name":_source_name(context),"expires_turn":-1}]
 		if destination=="hand": _receive_card(owner,card,"copy" if effect.mode=="copy" else "retrieve")
 		elif destination=="deck":
 			if state.players[owner].deck.size()>=100: return
@@ -3591,11 +3653,25 @@ func _fighter_cover_allows(attacker: Dictionary, row: String, target_uid: int) -
 	return true
 
 
+## The units among uids with the lowest (or highest) current attack; ties all stay (#171).
+func _attack_rank(uids: Array, rank: String) -> Array:
+	if uids.is_empty(): return uids
+	var values: Array = uids.map(func(uid): return int(_unit(int(uid)).get("attack", 0)))
+	var edge: int = values.min() if rank == "lowest" else values.max()
+	return uids.filter(func(uid): return int(_unit(int(uid)).get("attack", 0)) == edge)
+
 func _select_units(effect: Dictionary, context: Dictionary) -> void:
 	var candidates: Array=[]
 	for unit in _ordered_units():
 		if (effect.side=="any" or (unit.owner==context.owner)==(effect.side=="ally")) and _matches_unit_filter(unit,effect.get("unit_filter",{})) and not _explicit_target_blocked(unit,context.card): candidates.append(int(unit.uid))
+	if effect.get("unit_filter",{}).has("attack_rank"): candidates = _attack_rank(candidates, str(effect.unit_filter.attack_rank))
 	var selected: Array=[]
+	if effect.get("random", false):
+		while not candidates.is_empty() and selected.size() < int(effect.max):
+			var picked: int = candidates[_random_index(candidates.size())]
+			if not _fault.is_empty(): return
+			selected.append(picked); candidates.erase(picked)
+		candidates = []
 	var minimum:=mini(int(effect.min),candidates.size())
 	while not candidates.is_empty() and selected.size()<int(effect.max):
 		if _choice_cursor>=64: _fault="RULE_BUDGET_EXCEEDED";return

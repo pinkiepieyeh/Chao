@@ -164,8 +164,12 @@ function extendedSemantics(a,body){
   if(e.op==='modify_operation_cost'&&e.per_stack&&e.cost_delta===undefined)bad('按层数修改行动费需要 cost_delta。');
   if(e.op==='modify_operation_cost'&&e.per_stack&&a.trigger==='while_active')bad('按层数修改行动费不能作为持续光环。');
   if(e.op==='temporarily_remove'&&e.return_when==='immediate'&&e.after_turns!==undefined)bad('立即返回不设置回合延迟。');
-  if(e.op==='remove_hand'&&(!e.card_name.trim()||e.card_name!==e.card_name.trim()))bad('移除手牌需填写准确卡名。');
-  if(e.op==='remove_hand')plainText(e.card_name,'/effects/card_name');
+  if(e.op==='remove_hand'&&e.card_name!==undefined&&(!e.card_name.trim()||e.card_name!==e.card_name.trim()))bad('移除手牌需填写准确卡名。');
+  if(e.op==='remove_hand'&&e.card_name!==undefined)plainText(e.card_name,'/effects/card_name');
+  if(e.op==='select_units'&&e.random&&e.min!==e.max)bad('随机选择的数量须固定（min 与 max 相同）。');
+  if(e.op==='transfer_card'&&e.from==='opponent'){if(e.player==='opponent')bad('取自敌方时不再写 player: opponent。');if(![e.source,...(e.fallback_sources??[])].every(x=>['hand','deck','discard'].includes(x)))bad('只能从敌方手牌、牌组或弃牌区取牌。');}
+  if(e.op==='transfer_card'&&e.reveal!==undefined&&e.selection!=='chosen')bad('随机展示后需要手动选择（selection: chosen）。');
+  if(e.op==='transfer_card'&&e.hand_cost_delta!==undefined&&(e.destination!=='hand'||e.hand_cost_delta===0))bad('进入手牌的费用变化需要目的地为手牌且不为零。');
   for(const v of [e.amount,e.attack_delta,e.health_delta,e.value,e.per_stack?{stack_count:e.per_stack}:undefined])if(unitValue(v)){
    const q=unitValue(v);
    if(v.stack_count&&!validStackName(q.stack))bad('层数名称无效。');
@@ -200,7 +204,7 @@ function extendedSemantics(a,body){
   if(e.op==='transfer_card'&&e.entry&&!(e.source==='deck'&&e.mode==='move'&&e.destination==='support'))bad('部署方式仅用于从牌库移动单位到后援线。');
  }
  if(a.trigger==='while_active'){
-   if(!keywordAura(a)&&(/keyword_id|attack|health/.test(JSON.stringify(a.premise??{}))||premiseUnitQueries(a.premise).some(q=>!positionQuery(q))))bad('持续条件不能读取光环可改变的属性或词条。');
+   if(!keywordAura(a)&&(/attack|health/.test(JSON.stringify(a.premise??{}))||premiseUnitQueries(a.premise).some(q=>!positionQuery(q))))bad('持续条件不能读取光环可改变的属性或词条。');
    if(a.limit||a.damage_step||a.target)bad('持续效果不能包含次数或目标选择。');
    if(a.premise){const stats=JSON.stringify(a.premise).match(/"stat":"([^"]+)"/g)||[];if(stats.some(x=>!/(?:enemy|friendly)_(?:unit|front|support)_count|other_friendly_unit_count/.test(x)))bad('持续条件仅允许战场单位与战线计数。');}
    for(const e of a.effects){
@@ -624,6 +628,7 @@ export function rulesText(def) {
   if(def.damage_bonuses?.length)lines.push('效果伤害：'+bonusText(def.damage_bonuses,keyword)+'。');
   const effect = (e, ability) => {
     const selector = ability.target ?? def.play_target;
+    if(e.op==='select_units'&&e.random)return `随机选择${e.max}个${e.side==='ally'?'友方':e.side==='enemy'?'敌方':''}${e.unit_filter?.name_contains?`【${e.unit_filter.name_contains}】`:''}单位`;
     if(e.op==='select_units')return `选择${e.min}～${e.max}个${e.side==='ally'?'友方':e.side==='enemy'?'敌方':''}${e.unit_filter?.name_contains?`【${e.unit_filter.name_contains}】`:''}单位`;
     let target = e.target === 'chosen' && selector ? `${ability.target && ['on_death','own_turn_start','own_turn_end','opponent_turn_start','opponent_turn_end','next_own_turn_start','next_opponent_turn_start','next_own_order_played','next_own_unit_deployed','own_unit_deployed','enemy_unit_deployed','own_order_played','enemy_order_played','own_card_played','enemy_card_played','after_attacked','own_unit_moved','enemy_unit_moved','on_kill','on_attacked','on_damaged','on_stack_gained','after_attack','after_move','after_action','own_unit_died','enemy_unit_died','on_attack','own_unit_entered','enemy_unit_entered','own_unit_attacked_hq','enemy_unit_attacked_hq','own_unit_became_veteran','enemy_unit_became_veteran','on_veteran','own_unit_attacked','enemy_unit_attacked','own_unit_retreated','enemy_unit_retreated','own_unit_returned','enemy_unit_returned','on_leave'].includes(ability.trigger) && (selector.timing??'deploy')==='deploy'?'部署时选定的':'所选'}${selectorText(selector)}` : ['adjacent_to_chosen','chosen_and_adjacent'].includes(e.target)&&selector?`所选${selectorText(selector)}${e.target==='chosen_and_adjacent'?'及其':'的'}左右相邻单位`:(e.target==='selected_units'?'所选单位':targets[e.target]), duration = ability.trigger==='while_active' ? '' : e.duration === 'end_of_turn' ? '本回合' : e.duration === 'match' ? '永久' : e.duration==='next_own_turn_start'?'直到下个己方回合开始':e.duration==='next_opponent_turn_end'?'直到下个敌方回合结束':'在场期间';
     if(e.unit_filter)target+=({front:'中前线的',support:'中后援线的'})[e.unit_filter.row]??'';
@@ -656,7 +661,8 @@ export function rulesText(def) {
       case 'grant_ability': return `${target}获得“${rulesText({...def,kind:'unit',keywords:[],play_target:null,abilities:[e.ability]})}”（${duration}）`;
       case 'grant_keyword': return `${target}获得${keyword(e.keyword_id)?.name??e.keyword_id}（${duration}）`;
       case 'set_attack_limit': return `${target}每回合最多攻击 ${e.attacks} 次（${duration}）`;
-      case 'remove_hand': return `移除${e.player==='owner'?'己方':'敌方'}手牌中的所有【${e.card_name}】`;
+      case 'remove_hand': return e.card_name===undefined?`移除${e.player==='owner'?'己方':'敌方'}全部手牌`:`移除${e.player==='owner'?'己方':'敌方'}手牌中的所有【${e.card_name}】`;
+      case 'salvage_copy': return `将本卡的收缴副本（1/1，费用至多1，无罪孽）加入${e.player==='owner'?'己方':'敌方'}手牌`;
       case 'modify_stacks': return `${target}${e.stack==='heavy_armor'?'重甲':e.stack+'层数'} ${delta(e.amount)}（${duration}）`;
       case 'set_stacks': return `${target}${e.stack==='heavy_armor'?'重甲':e.stack+'层数'}设为 ${unitValue(e.amount)?unitValueText(e.amount):e.amount}（${duration}）`;
       case 'modify_operation_cost': return `${target}行动费${e.cost_set!==undefined?'为'+e.cost_set:e.per_stack?`每有1层${unitValueText({stack_count:e.per_stack}).replace(/层数$/,'')}${delta(e.cost_delta)}`:delta(e.cost_delta)}（${duration}）`;
@@ -665,7 +671,7 @@ export function rulesText(def) {
       case 'forbid_play': return `${e.player==='opponent'?'敌方':'己方'}下个回合不能打出${e.card_kinds.map(k=>kindNames[k]).join('或')}`;
       case 'modify_play_cost': return `己方${e.first_each_turn?'每回合打出的第一张':'打出的'}${handFilterText(e.filter??{},keyword,'牌')}费用${e.cost_delta>0?'+':''}${e.cost_delta}（最低0）`;
       case 'remove_abilities': return `使${target}失去“${triggers[e.trigger]??e.trigger}”能力${e.duration==='end_of_turn'?'（本回合）':''}`;
-      case 'destroy': return `消灭${target}`;
+      case 'destroy': return `消灭${target}${e.salvage?'并收缴（1/1 副本加入己方手牌）':''}`;
       case 'pin': return `压制${target}（各自后续${e.turns}回合结束时解除）`;
       case 'suppress': return `抑制${target}`;
       case 'repair': return `完全修复${target}`;
@@ -698,7 +704,7 @@ export function rulesText(def) {
       case 'unit_limit': return `${e.player==='both'?'双方':e.player==='owner'?'己方':'敌方'}在场单位最多${e.amount}个`;
       case 'reshuffle_zones': return `${e.player==='both'?'双方':e.player==='owner'?'己方':'敌方'}将${e.zones.map(z=>({hand:'手牌',discard:'弃牌堆',battlefield:'在场单位'})[z]).join('、')}洗回各自牌库`;
       case 'liberate': return '解放为'+(def.tokens.find(t=>t.token_id===e.token_id)?.name??e.token_id);
-      case 'transfer_card': {if(e.copy_buff){const {copy_buff:b,...base}=e;return `${effect(base,ability)}，该复制${delta(b.attack_delta)}/${delta(b.health_delta)}（${b.duration==='match'?'永久':'在场期间'}）`;} if(e.entry==='deploy')return `从${e.player==='opponent'?'敌方':'己方'}牌库${e.selection==='chosen'?'由其选择':'随机选择'}${e.amount}张单位，免费部署`; if(e.player==='opponent'){const local={...e};delete local.player;return effect(local,ability).replaceAll('己方','敌方').replace('手动选择','由敌方选择');}if(e.source==='self'&&e.mode==='move')return (e.destination==='hand'?'将阵亡原卡返回己方手牌':'将阵亡原卡放入牌库'+({top:'顶',bottom:'底',random:'随机位置'}[e.deck_position??'random']))+(e.overflow?'；手牌满则改放牌库顶':'');
+      case 'transfer_card': {if(e.hand_cost_delta!==undefined){const {hand_cost_delta:d,...plain}=e;return `${effect(plain,ability)}，该牌费用${d>0?'+':''}${d}`;} if(e.reveal!==undefined){const {reveal:n,...plain}=e;return `随机展示${n}张，${effect(plain,ability).replace('手动选择','从中选择')}`;} if(e.from==='opponent'){const {from:_f,...plain}=e;return effect(plain,ability).replace('从当前手牌','从敌方手牌').replace('从己方牌组','从敌方牌组').replace('从己方弃牌区','从敌方弃牌区');} if(e.copy_buff){const {copy_buff:b,...base}=e;return `${effect(base,ability)}，该复制${delta(b.attack_delta)}/${delta(b.health_delta)}（${b.duration==='match'?'永久':'在场期间'}）`;} if(e.entry==='deploy')return `从${e.player==='opponent'?'敌方':'己方'}牌库${e.selection==='chosen'?'由其选择':'随机选择'}${e.amount}张单位，免费部署`; if(e.player==='opponent'){const local={...e};delete local.player;return effect(local,ability).replaceAll('己方','敌方').replace('手动选择','由敌方选择');}if(e.source==='self'&&e.mode==='move')return (e.destination==='hand'?'将阵亡原卡返回己方手牌':'将阵亡原卡放入牌库'+({top:'顶',bottom:'底',random:'随机位置'}[e.deck_position??'random']))+(e.overflow?'；手牌满则改放牌库顶':'');
   if(e.source==='attack_target')return `将被攻击单位的${e.amount}张复制${{hand:'加入手牌',deck:'洗入牌库',support:'召唤至后援线',source_position:'召唤至原位置'}[e.destination]}${e.copy_state==='current_stats'?'（保留当前攻击、防御上限与费用）':''}`;
   if(e.amount?.stat==='selected_destroyed_count')return `从己方弃牌区随机召唤等量${e.filter?.name_contains?`【${e.filter.name_contains}】`:''}单位`;
   if(e.source==='self'&&!e.filter){const dest={hand:'加入己方手牌',deck:'洗入己方牌库',support:'召唤至己方后援线',source_position:'召唤至原位置'}[e.destination];return `将自身的${e.amount}张复制${dest}${copyInheritanceText(e)}`;}const source={event_card:'触发事件的卡牌',deck:'己方牌组',discard:'己方弃牌区',hand:'当前手牌',self:'本卡',drawn:'本组刚抽到的手牌',starting_deck:'己方起始牌组卡池'}[e.source],dest={hand:'己方手牌',deck:'己方牌组随机位置',support:'己方后援线',source_position:'来源单位原位置'}[e.destination],f=e.filter??{};return `从${source}${e.selection==='highest_cost'?'随机选择费用最高的':e.selection==='random'?'随机选择':e.selection==='chosen'?'手动选择':'按顺序选择'} ${e.amount} 张${f.card_name?`【${f.card_name}】`:''}${f.sin!==undefined?({wrath:'暴怒',lust:'色欲',sloth:'怠惰',gluttony:'暴食',gloom:'忧郁',pride:'傲慢',envy:'嫉妒',null:'无罪孽'}[f.sin]):''}${f.unit_class?unitClassText([f.unit_class]):f.kind==='unit'?'单位':''}${f.faction_id?'（指定阵营）':''}${f.event_faction?'（事件卡同阵营）':''}${f.event_cost_distance!==undefined?`（费用差不超过${f.event_cost_distance}）`:''}卡牌，${e.mode==='copy'?'复制':'移动'}到${dest}${e.mode==='copy'?copyInheritanceText(e):''}${e.fallback_sources?`；无符合牌则依次从${e.fallback_sources.map(s=>({deck:'牌库',discard:'弃牌区',hand:'手牌'})[s]).join('、')}寻找`:''}`;}

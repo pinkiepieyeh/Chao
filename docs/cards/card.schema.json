@@ -1689,6 +1689,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -2721,6 +2727,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -4367,6 +4379,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -4429,7 +4447,9 @@
                 "core.immune",
                 "core.untargetable",
                 "core.order_untargetable",
-                "core.ignore_fighter_cover"
+                "core.ignore_fighter_cover",
+                "core.unpinnable",
+                "core.poisonous"
               ]
             },
             "keyword_version": {
@@ -4644,6 +4664,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -4959,6 +4985,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -5197,8 +5229,17 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
+            },
+            "salvage": {
+              "const": true
             }
           },
           "required": [
@@ -5446,6 +5487,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -5781,6 +5828,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -6265,6 +6318,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -6565,6 +6624,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -6882,6 +6947,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -7117,6 +7188,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -7353,6 +7430,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -7599,6 +7682,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -7834,6 +7923,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -8069,6 +8164,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -8309,6 +8410,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -8619,6 +8726,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -9348,6 +9461,19 @@
                   ]
                 }
               }
+            },
+            "from": {
+              "const": "opponent"
+            },
+            "reveal": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5
+            },
+            "hand_cost_delta": {
+              "type": "integer",
+              "minimum": -5,
+              "maximum": 5
             }
           },
           "required": [
@@ -9595,6 +9721,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -9842,6 +9974,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -9874,8 +10012,7 @@
           },
           "required": [
             "op",
-            "player",
-            "card_name"
+            "player"
           ]
         },
         {
@@ -10475,6 +10612,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -11323,6 +11466,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -12534,6 +12683,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -12804,6 +12959,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -13073,6 +13234,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -13299,6 +13466,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -13530,6 +13703,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -14194,6 +14373,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -14315,6 +14500,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -14428,6 +14619,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -14624,6 +14821,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -14682,6 +14885,74 @@
                               "enum": [
                                 "opponent",
                                 "owner"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "player"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "grant_keyword"
+                            },
+                            "target": {
+                              "const": "self"
+                            },
+                            "keyword_id": {
+                              "enum": [
+                                "core.blitz",
+                                "core.guard",
+                                "core.ambush",
+                                "core.fury",
+                                "core.smokescreen",
+                                "core.shock",
+                                "core.mobilize",
+                                "core.alpine",
+                                "core.salvage",
+                                "core.immune",
+                                "core.untargetable",
+                                "core.order_untargetable",
+                                "core.ignore_fighter_cover",
+                                "core.unpinnable",
+                                "core.poisonous"
+                              ]
+                            },
+                            "keyword_version": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2
+                            },
+                            "duration": {
+                              "enum": [
+                                "battle",
+                                "match"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "target",
+                            "keyword_id",
+                            "keyword_version",
+                            "duration"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "salvage_copy"
+                            },
+                            "player": {
+                              "enum": [
+                                "owner",
+                                "opponent"
                               ]
                             }
                           },
@@ -15303,6 +15574,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -15559,6 +15836,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -15852,6 +16135,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -16145,6 +16434,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -16905,6 +17200,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -17026,6 +17327,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -17437,6 +17744,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -18152,6 +18465,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -19160,6 +19479,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -19367,6 +19692,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -19573,6 +19904,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -19736,6 +20073,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -19904,6 +20247,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -20473,6 +20822,25 @@
                           "op",
                           "player"
                         ]
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "op": {
+                            "const": "salvage_copy"
+                          },
+                          "player": {
+                            "enum": [
+                              "owner",
+                              "opponent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "player"
+                        ]
                       }
                     ]
                   }
@@ -20797,6 +21165,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -21061,6 +21435,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -21294,6 +21674,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -21549,6 +21935,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -21916,8 +22308,17 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
+            },
+            "random": {
+              "const": true
             }
           },
           "required": [
@@ -22027,6 +22428,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -22269,6 +22676,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -22365,7 +22778,9 @@
                 "core.immune",
                 "core.untargetable",
                 "core.order_untargetable",
-                "core.ignore_fighter_cover"
+                "core.ignore_fighter_cover",
+                "core.unpinnable",
+                "core.poisonous"
               ]
             },
             "unit_filter": {
@@ -22566,6 +22981,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -22902,6 +23323,25 @@
           "required": [
             "op",
             "tiers"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "salvage_copy"
+            },
+            "player": {
+              "enum": [
+                "owner",
+                "opponent"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "player"
           ]
         }
       ]
@@ -26683,6 +27123,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -27715,6 +28161,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -29361,6 +29813,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -29423,7 +29881,9 @@
                 "core.immune",
                 "core.untargetable",
                 "core.order_untargetable",
-                "core.ignore_fighter_cover"
+                "core.ignore_fighter_cover",
+                "core.unpinnable",
+                "core.poisonous"
               ]
             },
             "keyword_version": {
@@ -29638,6 +30098,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -29953,6 +30419,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -30191,8 +30663,17 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
+            },
+            "salvage": {
+              "const": true
             }
           },
           "required": [
@@ -30440,6 +30921,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -30775,6 +31262,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -31259,6 +31752,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -31559,6 +32058,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -31876,6 +32381,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -32111,6 +32622,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -32347,6 +32864,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -32593,6 +33116,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -32828,6 +33357,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -33063,6 +33598,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -33303,6 +33844,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -33613,6 +34160,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -34342,6 +34895,19 @@
                   ]
                 }
               }
+            },
+            "from": {
+              "const": "opponent"
+            },
+            "reveal": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5
+            },
+            "hand_cost_delta": {
+              "type": "integer",
+              "minimum": -5,
+              "maximum": 5
             }
           },
           "required": [
@@ -34589,6 +35155,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -34836,6 +35408,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -34868,8 +35446,7 @@
           },
           "required": [
             "op",
-            "player",
-            "card_name"
+            "player"
           ]
         },
         {
@@ -35469,6 +36046,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -36317,6 +36900,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -37528,6 +38117,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -37798,6 +38393,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -38067,6 +38668,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -38293,6 +38900,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -38524,6 +39137,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -39188,6 +39807,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -39309,6 +39934,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -39422,6 +40053,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -39618,6 +40255,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -39676,6 +40319,74 @@
                               "enum": [
                                 "opponent",
                                 "owner"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "player"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "grant_keyword"
+                            },
+                            "target": {
+                              "const": "self"
+                            },
+                            "keyword_id": {
+                              "enum": [
+                                "core.blitz",
+                                "core.guard",
+                                "core.ambush",
+                                "core.fury",
+                                "core.smokescreen",
+                                "core.shock",
+                                "core.mobilize",
+                                "core.alpine",
+                                "core.salvage",
+                                "core.immune",
+                                "core.untargetable",
+                                "core.order_untargetable",
+                                "core.ignore_fighter_cover",
+                                "core.unpinnable",
+                                "core.poisonous"
+                              ]
+                            },
+                            "keyword_version": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2
+                            },
+                            "duration": {
+                              "enum": [
+                                "battle",
+                                "match"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "target",
+                            "keyword_id",
+                            "keyword_version",
+                            "duration"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "salvage_copy"
+                            },
+                            "player": {
+                              "enum": [
+                                "owner",
+                                "opponent"
                               ]
                             }
                           },
@@ -40297,6 +41008,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -40553,6 +41270,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -40846,6 +41569,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -41139,6 +41868,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -41623,6 +42358,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -41744,6 +42485,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -42155,6 +42902,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -42870,6 +43623,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -43878,6 +44637,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -44085,6 +44850,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -44291,6 +45062,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -44454,6 +45231,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -44622,6 +45405,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -45191,6 +45980,25 @@
                           "op",
                           "player"
                         ]
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "op": {
+                            "const": "salvage_copy"
+                          },
+                          "player": {
+                            "enum": [
+                              "owner",
+                              "opponent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "player"
+                        ]
                       }
                     ]
                   }
@@ -45515,6 +46323,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -45779,6 +46593,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -46012,6 +46832,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -46267,6 +47093,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -46512,6 +47344,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -46754,6 +47592,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -46850,7 +47694,9 @@
                 "core.immune",
                 "core.untargetable",
                 "core.order_untargetable",
-                "core.ignore_fighter_cover"
+                "core.ignore_fighter_cover",
+                "core.unpinnable",
+                "core.poisonous"
               ]
             },
             "unit_filter": {
@@ -47051,6 +47897,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -47387,6 +48239,25 @@
           "required": [
             "op",
             "tiers"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "salvage_copy"
+            },
+            "player": {
+              "enum": [
+                "owner",
+                "opponent"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "player"
           ]
         }
       ]
@@ -48033,6 +48904,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -49065,6 +49942,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -50711,6 +51594,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -50773,7 +51662,9 @@
                 "core.immune",
                 "core.untargetable",
                 "core.order_untargetable",
-                "core.ignore_fighter_cover"
+                "core.ignore_fighter_cover",
+                "core.unpinnable",
+                "core.poisonous"
               ]
             },
             "keyword_version": {
@@ -50988,6 +51879,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -51303,6 +52200,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -51541,8 +52444,17 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
+            },
+            "salvage": {
+              "const": true
             }
           },
           "required": [
@@ -51790,6 +52702,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -52125,6 +53043,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -52609,6 +53533,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -52909,6 +53839,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -53226,6 +54162,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -53461,6 +54403,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -53697,6 +54645,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -53943,6 +54897,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -54178,6 +55138,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -54413,6 +55379,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -54653,6 +55625,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -54963,6 +55941,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -55692,6 +56676,19 @@
                   ]
                 }
               }
+            },
+            "from": {
+              "const": "opponent"
+            },
+            "reveal": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5
+            },
+            "hand_cost_delta": {
+              "type": "integer",
+              "minimum": -5,
+              "maximum": 5
             }
           },
           "required": [
@@ -55939,6 +56936,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -56186,6 +57189,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -56218,8 +57227,7 @@
           },
           "required": [
             "op",
-            "player",
-            "card_name"
+            "player"
           ]
         },
         {
@@ -56819,6 +57827,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -57667,6 +58681,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -58878,6 +59898,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -59148,6 +60174,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             },
@@ -59417,6 +60449,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -59643,6 +60681,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -59874,6 +60918,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               }
                             }
@@ -60538,6 +61588,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -60659,6 +61715,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -60772,6 +61834,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -60968,6 +62036,12 @@
                                 },
                                 "not_chosen": {
                                   "const": true
+                                },
+                                "attack_rank": {
+                                  "enum": [
+                                    "lowest",
+                                    "highest"
+                                  ]
                                 }
                               },
                               "required": [
@@ -61026,6 +62100,74 @@
                               "enum": [
                                 "opponent",
                                 "owner"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "player"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "grant_keyword"
+                            },
+                            "target": {
+                              "const": "self"
+                            },
+                            "keyword_id": {
+                              "enum": [
+                                "core.blitz",
+                                "core.guard",
+                                "core.ambush",
+                                "core.fury",
+                                "core.smokescreen",
+                                "core.shock",
+                                "core.mobilize",
+                                "core.alpine",
+                                "core.salvage",
+                                "core.immune",
+                                "core.untargetable",
+                                "core.order_untargetable",
+                                "core.ignore_fighter_cover",
+                                "core.unpinnable",
+                                "core.poisonous"
+                              ]
+                            },
+                            "keyword_version": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 2
+                            },
+                            "duration": {
+                              "enum": [
+                                "battle",
+                                "match"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "op",
+                            "target",
+                            "keyword_id",
+                            "keyword_version",
+                            "duration"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "additionalProperties": false,
+                          "properties": {
+                            "op": {
+                              "const": "salvage_copy"
+                            },
+                            "player": {
+                              "enum": [
+                                "owner",
+                                "opponent"
                               ]
                             }
                           },
@@ -61647,6 +62789,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -61903,6 +63051,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -62196,6 +63350,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -62489,6 +63649,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -62886,6 +64052,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -63007,6 +64179,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -63418,6 +64596,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -64133,6 +65317,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -65141,6 +66331,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -65348,6 +66544,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           },
@@ -65554,6 +66756,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -65717,6 +66925,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -65885,6 +67099,12 @@
                               },
                               "not_chosen": {
                                 "const": true
+                              },
+                              "attack_rank": {
+                                "enum": [
+                                  "lowest",
+                                  "highest"
+                                ]
                               }
                             }
                           }
@@ -66454,6 +67674,25 @@
                           "op",
                           "player"
                         ]
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "properties": {
+                          "op": {
+                            "const": "salvage_copy"
+                          },
+                          "player": {
+                            "enum": [
+                              "owner",
+                              "opponent"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "op",
+                          "player"
+                        ]
                       }
                     ]
                   }
@@ -66778,6 +68017,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -67042,6 +68287,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -67275,6 +68526,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -67530,6 +68787,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -67775,6 +69038,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               },
               "required": [
@@ -68017,6 +69286,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             },
@@ -68113,7 +69388,9 @@
                 "core.immune",
                 "core.untargetable",
                 "core.order_untargetable",
-                "core.ignore_fighter_cover"
+                "core.ignore_fighter_cover",
+                "core.unpinnable",
+                "core.poisonous"
               ]
             },
             "unit_filter": {
@@ -68314,6 +69591,12 @@
                 },
                 "not_chosen": {
                   "const": true
+                },
+                "attack_rank": {
+                  "enum": [
+                    "lowest",
+                    "highest"
+                  ]
                 }
               }
             }
@@ -68609,6 +69892,25 @@
             "target",
             "trigger",
             "duration"
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "op": {
+              "const": "salvage_copy"
+            },
+            "player": {
+              "enum": [
+                "owner",
+                "opponent"
+              ]
+            }
+          },
+          "required": [
+            "op",
+            "player"
           ]
         }
       ]

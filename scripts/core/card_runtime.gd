@@ -756,7 +756,7 @@ static func rules_text(card: Dictionary) -> String:
 			var amount_text := _numeric_text(effect.get("amount", 0))
 			var duration := "" if ability.trigger == "while_active" else "本回合" if effect.get("duration", "battle") == "end_of_turn" else "永久" if effect.get("duration") == "match" else "直到下个己方回合开始" if effect.get("duration")=="next_own_turn_start" else "直到下个敌方回合结束" if effect.get("duration")=="next_opponent_turn_end" else "在场期间"
 			match effect.op:
-				"select_units": effects.append("选择%d～%d个%s%s单位" % [effect.min,effect.max,"友方" if effect.side=="ally" else "敌方" if effect.side=="enemy" else "","【%s】"%effect.unit_filter.name_contains if effect.get("unit_filter",{}).has("name_contains") else ""])
+				"select_units": effects.append(("随机选择%d个%s%s单位" % [effect.max,"友方" if effect.side=="ally" else "敌方" if effect.side=="enemy" else "","【%s】"%effect.unit_filter.name_contains if effect.get("unit_filter",{}).has("name_contains") else ""]) if effect.get("random",false) else"选择%d～%d个%s%s单位" % [effect.min,effect.max,"友方" if effect.side=="ally" else "敌方" if effect.side=="enemy" else "","【%s】"%effect.unit_filter.name_contains if effect.get("unit_filter",{}).has("name_contains") else ""])
 				"if_destroyed":
 					var tiers := PackedStringArray()
 					for tier in effect.tiers: tiers.append("消灭至少%d个时，%s" % [int(tier.min), choice_text({"effects":tier.effects},definition,ability)])
@@ -781,7 +781,8 @@ static func rules_text(card: Dictionary) -> String:
 					var choices := PackedStringArray()
 					for option in effect.options: choices.append(option.label+("（需"+premise_text(option.premise)+"）" if option.has("premise") else "")+"〔"+choice_text(option,definition,ability)+"〕")
 					effects.append("抉择（仅选一项）："+" / ".join(choices))
-				"remove_hand": effects.append("移除%s手牌中的所有【%s】" % ["己方" if effect.player=="owner" else "敌方",effect.card_name])
+				"remove_hand": effects.append(("移除%s手牌中的所有【%s】" % ["己方" if effect.player=="owner" else "敌方",effect.card_name]) if effect.has("card_name") else "移除%s全部手牌" % ("己方" if effect.player=="owner" else "敌方"))
+				"salvage_copy": effects.append("将本卡的收缴副本（1/1，费用至多1，无罪孽）加入%s手牌" % ("己方" if effect.player=="owner" else "敌方"))
 				"cancel_action": effects.append("取消本次指令或总部攻击，费用不返还")
 				"damage":
 					var text := "对%s造成%s点伤害" % [target, amount_text]
@@ -823,7 +824,7 @@ static func rules_text(card: Dictionary) -> String:
 				"set_stacks": effects.append("%s使%s%s设为%s" % [duration, target, "重甲" if effect.stack=="heavy_armor" else effect.stack+"层数", _unit_value_text(effect.amount) if _is_unit_query(effect.amount) else str(int(effect.amount))])
 				"modify_operation_cost": effects.append("%s行动费%s%s" % [target, "为%d"%effect.cost_set if effect.has("cost_set") else ("每有1层%s%+d" % [_unit_value_text({"stack_count":effect.per_stack}).trim_suffix("层数"), effect.cost_delta] if effect.has("per_stack") else "%+d"%effect.cost_delta), "（%s）" % duration if not duration.is_empty() else ""])
 				"remove_keyword": effects.append("使%s失去%s" % [target, keyword_name(effect.keyword_id)])
-				"destroy": effects.append("消灭%s" % target)
+				"destroy": effects.append("消灭%s" % target + ("并收缴（1/1 副本加入己方手牌）" if effect.get("salvage",false) else ""))
 				"pin": effects.append("压制%s（各自后续%d回合结束时解除）" % [target,effect.turns])
 				"suppress": effects.append("抑制%s" % target)
 				"repair": effects.append("完全修复%s" % target)
@@ -1107,7 +1108,13 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 			if not _stack_name(e.stack):return "层数名称需为1—32字，无首尾空格及控制字符"
 			if not e.amount is Dictionary and abs(int(e.amount))>(100 if e.stack=="heavy_armor" else 99):return "层数操作超出范围（重甲100，自定义99）"
 			if a.trigger=="while_active" and e.stack!="heavy_armor":return "自定义层数不支持持续光环"
-		if e.op=="remove_hand" and (e.card_name!=e.card_name.strip_edges() or not _plain(e.card_name)):return "移除手牌需准确卡名"
+		if e.op=="remove_hand" and e.has("card_name") and (e.card_name!=e.card_name.strip_edges() or not _plain(e.card_name)):return "移除手牌需准确卡名"
+		if e.op=="select_units" and e.get("random",false) and e.min!=e.max: return "随机选择的数量须固定（min 与 max 相同）"
+		if e.op=="transfer_card" and e.get("from")=="opponent":
+			if e.get("player")=="opponent": return "取自敌方时不再写 player: opponent"
+			if not ([e.source]+e.get("fallback_sources",[])).all(func(x):return x in ["hand","deck","discard"]): return "只能从敌方手牌、牌组或弃牌区取牌"
+		if e.op=="transfer_card" and e.has("reveal") and e.selection!="chosen": return "随机展示后需要手动选择（selection: chosen）"
+		if e.op=="transfer_card" and e.has("hand_cost_delta") and (e.destination!="hand" or int(e.hand_cost_delta)==0): return "进入手牌的费用变化需要目的地为手牌且不为零"
 		if e.op in ["shuffle_into_deck","tax_opponent_plays","forbid_deploy","forbid_play","remove_keyword","remove_abilities"] and a.trigger=="while_active":return "洗入牌库、征收费用、禁止出牌和失去词条或能力是一次性效果，不能作为持续光环"
 		if e.op=="modify_play_cost" and a.trigger!="while_active":return "打出费用修正只能作为持续效果（在场期间）"
 		if e.op=="modify_play_cost" and e.cost_delta==0:return "费用变化不能为零"
@@ -1216,7 +1223,8 @@ static func _extended_error(a: Dictionary, body: Dictionary = {}) -> String:
 static func _aura_premise(p: Dictionary) -> bool:
 	if p.test=="unit_state": return p.target=="self" and p.state in ["in_front","in_support"]
 	if p.test=="destroyed_by": return false
-	if str(p).contains("keyword_id") or str(p).contains("attack") or str(p).contains("health"): return false
+	# Keywords may be read: while an aura's premise is checked, the engine ignores keywords granted by auras (#158).
+	if str(p).contains("attack") or str(p).contains("health"): return false
 	if _premise_unit_queries(p).any(func(q):return not (q.test=="unit_state" and q.target=="self" and q.state in ["in_front","in_support"])):return false
 	if p.test == "not": return _aura_premise(p.item)
 	if p.test in ["all","any"]:
@@ -1228,6 +1236,15 @@ static func _aura_premise(p: Dictionary) -> bool:
 	return true
 
 static func _transfer_text(e: Dictionary) -> String:
+	if e.has("hand_cost_delta"):
+		var plain: Dictionary=e.duplicate(true);plain.erase("hand_cost_delta")
+		return _transfer_text(plain)+"，该牌费用%+d" % int(e.hand_cost_delta)
+	if e.has("reveal"):
+		var plain: Dictionary=e.duplicate(true);plain.erase("reveal")
+		return "随机展示%d张，" % int(e.reveal)+_transfer_text(plain).replace("手动选择","从中选择")
+	if e.get("from")=="opponent":
+		var plain: Dictionary=e.duplicate(true);plain.erase("from")
+		return _transfer_text(plain).replace("从当前手牌","从敌方手牌").replace("从己方牌组","从敌方牌组").replace("从己方弃牌区","从敌方弃牌区")
 	if e.has("copy_buff"):
 		var base: Dictionary=e.duplicate(true);base.erase("copy_buff")
 		return _transfer_text(base)+"，该复制%+d/%+d（%s）"%[e.copy_buff.attack_delta,e.copy_buff.health_delta,"永久" if e.copy_buff.duration=="match" else "在场期间"]
@@ -1532,6 +1549,7 @@ static func bold_rules_text(text: String, d: Dictionary) -> String:
 
 static func _filter_detail(f: Dictionary) -> String:
 	var text: String=("老兵" if f.is_veteran else "非老兵") if f.has("is_veteran") else ""
+	if f.has("attack_rank"): text = ("攻击力最低的" if f.attack_rank == "lowest" else "攻击力最高的") + text
 	if f.get("not_chosen", false): text = "所选单位以外的" + text
 	text += {"front":"前线的","support":"后援线的"}.get(f.get("row"),"")
 	if f.has("is_liberated"): text+=("已解放的" if f.is_liberated else "未解放的")

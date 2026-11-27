@@ -25,6 +25,8 @@ function materialize(state,parent,token) {
     d.schema_version=parent.definition.schema_version;d.ruleset_version=parent.definition.ruleset_version;
     d.appearance={emblem:d.kind==='unit'?d.unit_class:d.kind};
     if(parent.definition.faction_id)d.faction_id=parent.definition.faction_id;
+    // A token without a sin takes its source card's sin (#173), the same as the engine does for generated cards.
+    if((d.sin===undefined||d.sin===null||d.sin==='')&&parent.definition.sin)d.sin=parent.definition.sin;
     d.tokens=library.filter(t=>reachable.has(t.token_id)).map(t=>structuredClone(t));
     compiled=compileCard(d,state.keywords);
     if(compiledCache.size>=2048)compiledCache.delete(compiledCache.keys().next().value);

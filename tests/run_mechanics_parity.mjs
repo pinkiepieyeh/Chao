@@ -174,6 +174,32 @@ for(const x of [1,3,10,11]){
  for(const category of ['large','normal','small','huge',null])add('0140/category/'+category,{...base('unit'),category});
  add('0140/ability-target',{...base('unit'),abilities:[{trigger:'own_turn_start',target:{side:'ally',row:'any',timing:'trigger'},effects:[{op:'destroy',target:'all_friendly_units',unit_filter:{not_chosen:true}}]}]});
 }
+// 0.15.0: random selection, attack rank, salvage, whole hand, opponent's zones, new keywords.
+{
+ const kw=(id,version=1)=>({id,version,params:{}});
+ const order=(effects,play_target=null)=>({...base('order'),play_target,abilities:[{trigger:'on_play',effects}]});
+ const selR={op:'select_units',side:'enemy',min:1,max:1,random:true};
+ for(const effects of [
+  [selR,{op:'damage',target:'selected_units',amount:4,unit_filter:{unit_classes:['fighter','bomber']}},{op:'destroy',target:'selected_units',unit_filter:{unit_classes:['infantry']}}],
+  [{...selR,max:2}],[{op:'select_units',side:'any',min:2,max:2,random:true},{op:'heal',target:'selected_units',amount:2}],
+  [{op:'destroy',target:'all_units',unit_filter:{attack_rank:'lowest'},salvage:true}],[{op:'damage',target:'all_enemy_units',amount:1,unit_filter:{attack_rank:'highest'}}],[{op:'destroy',target:'all_units',unit_filter:{attack_rank:'middle'}}],
+  [{op:'remove_hand',player:'owner'}],[{op:'remove_hand',player:'opponent',card_name:'甲'}],[{op:'remove_hand',player:'owner',card_name:' 甲'}],
+  [{op:'transfer_card',from:'opponent',source:'hand',destination:'hand',mode:'move',selection:'chosen',reveal:3,amount:1}],
+  [{op:'transfer_card',from:'opponent',source:'hand',destination:'hand',mode:'copy',selection:'random',amount:1,hand_cost_delta:-1}],
+  [{op:'transfer_card',from:'opponent',player:'opponent',source:'hand',destination:'hand',mode:'copy',selection:'random',amount:1}],
+  [{op:'transfer_card',from:'opponent',source:'self',destination:'hand',mode:'copy',selection:'random',amount:1}],
+  [{op:'transfer_card',source:'deck',destination:'hand',mode:'move',selection:'random',reveal:3,amount:1}],
+  [{op:'transfer_card',source:'deck',destination:'deck',mode:'copy',selection:'random',amount:1,hand_cost_delta:-1}],
+  [{op:'salvage_copy',player:'owner'}],
+  [{op:'grant_keyword',target:'all_friendly_units',keyword_id:'core.unpinnable',keyword_version:1,duration:'battle'}],[{op:'grant_keyword',target:'all_friendly_units',keyword_id:'core.poisonous',keyword_version:1,duration:'end_of_turn'}],
+ ]){add('0150/order/'+JSON.stringify(effects),order(effects));}
+ add('0150/grant-salvage',order([{op:'damage',target:'chosen',amount:1},{op:'grant_ability',target:'chosen',duration:'end_of_turn',ability:{trigger:'on_death',effects:[{op:'salvage_copy',player:'opponent'}]}}],{side:'enemy',row:'any'}));
+ add('0150/modify-cards-keyword',{...base('unit'),abilities:[{trigger:'on_death',effects:[{op:'modify_cards',player:'owner',zones:['hand'],filter:{card_name:'甲'},duration:'match',grant_abilities:[{trigger:'on_play',effects:[{op:'grant_keyword',target:'self',keyword_id:'core.unpinnable',keyword_version:1,duration:'battle'}]}]}]}]});
+ for(const version of [1,2,3])add('0150/salvage-v'+version,{...base('unit'),keywords:[kw('core.salvage',version)]});
+ for(const id of ['core.unpinnable','core.poisonous'])add('0150/kw/'+id,{...base('unit'),keywords:[kw(id)]});
+ add('0150/aura-keyword',{...base('unit'),abilities:[{trigger:'while_active',premise:{test:'compare',left:{count_units:{side:'ally',keyword_id:'core.guard',adjacent_to:'self'}},cmp:'gte',right:1},effects:[{op:'modify_stats',target:'self',attack_delta:1,health_delta:0,duration:'battle'}]}]});
+ add('0150/aura-attack',{...base('unit'),abilities:[{trigger:'while_active',premise:{test:'compare',left:{count_units:{side:'ally',attack:{cmp:'gte',value:3}}},cmp:'gte',right:1},effects:[{op:'modify_stats',target:'self',attack_delta:1,health_delta:0,duration:'battle'}]}]});
+}
 const dir = await mkdtemp(join(tmpdir(), 'frontline-mechanics-parity-'));
 try {
   const path = join(dir,'corpus.json'); await writeFile(path,JSON.stringify(corpus));
